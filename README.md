@@ -1,0 +1,2 @@
+# fghtApp
+Tietokantasovellusten harjoitustyö
