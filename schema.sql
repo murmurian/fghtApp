@@ -1,5 +1,12 @@
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username TEXT,
+  password TEXT,
+  admin BOOLEAN DEFAULT FALSE
+);
+
 CREATE TABLE fighters (
-  id INTEGER PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   firstname TEXT NOT NULL,
   lastname TEXT NOT NULL,
   nickname TEXT,
@@ -9,15 +16,44 @@ CREATE TABLE fighters (
   country SMALLINT REFERENCES countries(id)
 );
 
+CREATE TABLE referees (
+  id SERIAL PRIMARY KEY,
+  firstname TEXT,
+  lastname TEXT
+);
+
 CREATE TABLE countries (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
   abbreviation CHAR(3) NOT NULL
 );
 
-CREATE TABLE users (
+CREATE TABLE fights (
   id SERIAL PRIMARY KEY,
-  username TEXT,
-  password TEXT,
-  admin BOOLEAN DEFAULT FALSE
+  fighter1 INTEGER REFERENCES fighters(id),
+  fighter2 INTEGER REFERENCES fighters(id),
+  referee INTEGER REFERENCES referees(id),
+  rounds SMALLINT,
+  ending_round SMALLINT,
+  ending_time TIME,  
+  winner INTEGER REFERENCES fighters(id),
+  winning_method TEXT,
+  date DATE,
+  event INTEGER,
+  fight_order INTEGER,
+  weight_class SMALLINT,
+  CONSTRAINT unique_fight UNIQUE (fighter1, fighter2, date)
 );
+
+CREATE INDEX event_idx ON fights (event);
+
+CREATE TABLE events (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  date DATE NOT NULL,
+  location TEXT NOT NULL,
+  promotion TEXT NOT NULL,
+  CONSTRAINT unique_event UNIQUE (name, date)
+);
+
+CREATE INDEX promotion_idx ON events (promotion);

@@ -1,7 +1,19 @@
-<!DOCTYPE html>
-<h1>Fighters</h1>
-<ul>
-  {% for fighter in fighters %}
-    <li>{{ fighter.firstname }} {{ fighter.lastname }}</li>
-  {% endfor %}
-</ul>
+<!doctype html>
+<html>
+  <head>
+    <title>Fighters</title>
+  </head>
+  <body>
+    <h1>Fighters</h1>
+    <p>There are {{ count }} fighters in the database:</p>
+    <ul>
+      {% for fighter in messages %}
+      <li>
+        {{ fighter.firstname }} {% if fighter.nickname %}"{{ fighter.nickname }}"{% endif %} {{ fighter.lastname }} ({{ fighter.born }}, {{ fighter.age }} years old)
+        <br>
+        Height: {{ fighter.height }} m | Weight: {{ fighter.weight }} kg | Country: {{ fighter.country_name }}
+      </li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>
