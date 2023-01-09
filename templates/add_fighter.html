@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Add Fighter</title>
+  </head>
+  <body>
+    <h1>Add a New Fighter</h1>
+    <form action="/add_fighter" method="post">
+      <label for="firstname">First Name:</label><br>
+      <input type="text" id="firstname" name="firstname"><br>
+      <label for="lastname">Last Name:</label><br>
+      <input type="text" id="lastname" name="lastname"><br>
+      <label for="nickname">Nickname:</label><br>
+      <input type="text" id="nickname" name="nickname"><br>
+      <label for="born">Born:</label><br>
+      <input type="date" id="born" name="born"><br>
+      <label for="height">Height:</label><br>
+      <input type="text" id="height" name="height"><br>
+      <label for="weight">Weight:</label><br>
+      <input type="text" id="weight" name="weight"><br>
+      <label for="country">Country:</label><br>
+      <select id="country" name="country">
+        {% for country in countries %}
+        <option value="{{ country.name }}">{{ country.name }}</option>
+        {% endfor %}
+      </select><br><br>
+      <input type="submit" value="Submit">
+    </form> 
+  </body>
+</html>
