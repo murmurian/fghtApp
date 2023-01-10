@@ -1,0 +1,74 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h1>Add Fight</h1>
+<form method="POST" action="{{ url_for('add_fight') }}">
+    {{ form.csrf_token }}
+    <div class="form-group">
+        <label for="fighter1">Fighter 1</label>
+        <select id="fighter1" name="fighter1" class="form-control">
+            {% for id, name in form.fighter1.choices %}
+            <option value="{{ id }}">{{ name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="fighter2">Fighter 2</label>
+        <select id="fighter2" name="fighter2" class="form-control">
+            {% for id, name in form.fighter2.choices %}
+            <option value="{{ id }}">{{ name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="referee">Referee</label>
+        <select id="referee" name="referee" class="form-control">
+            {% for id, name in form.referee.choices %}
+            <option value="{{ id }}">{{ name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="rounds">Rounds</label>
+        {{ form.rounds(class='form-control') }}
+    </div>
+    <div class="form-group">
+        <label for="ending_time">Ending Time</label>
+        {{ form.ending_time(class='form-control') }}
+    </div>
+    <div class="form-group">
+        <label for="winner">Winner</label>
+        <select id="winner" name="winner" class="form-control">
+            {% for id, name in form.winner.choices %}
+            <option value="{{ id }}">{{ name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="winning_method">Winning Method</label>
+        {{ form.winning_method(class='form-control') }}
+    </div>
+    <div class="form-group">
+        <label for="date">Date</label>
+        {{ form.date(class='form-control') }}
+    </div>
+    <div class="form-group">
+        <label for="event">Event</label>
+        {{ form.event(class='form-control') }}
+    </div>
+    <div class="form-group">
+        <label for="fight_order">Fight Order</label>
+        {{ form.fight_order(class='form-control') }}
+    </div>
+    <div class="form-group">
+        <label for="weight_class">Weight Class</label>
+        {{ form.weight_class(class='form-control') }}
+    </div>
+    <div class="form-group">
+        <label for="draw">Draw</label>
+        {{ form.draw(class='form-control') }}
+    </div>
+    <button class="btn btn-primary" type="submit">Submit</button>
+
+</form>
+{% endblock %}

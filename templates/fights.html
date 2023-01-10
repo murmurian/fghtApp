@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fights</title>
+</head>
+<body>
+  <h1>Fights</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Fighter 1</th>
+        <th>Fighter 2</th>
+        <th>Referee</th>
+        <th>Rounds</th>
+        <th>Ending Time</th>
+        <th>Winner</th>
+        <th>Winning Method</th>
+        <th>Date</th>
+        <th>Event</th>
+        <th>Fight Order</th>
+        <th>Weight Class</th>
+        <th>Draw</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for fight in fights %}
+        <tr>
+          <td>{{ fight.id }}</td>
+          <td>{{ fight.f1_firstname }} {{ fight.f1_lastname }}</td>
+          <td>{{ fight.f2_firstname }} {{ fight.f2_lastname }}</td>
+          <td>{{ fight.ref_firstname }} {{ fight.ref_lastname }}</td>
+          <td>{{ fight.rounds }}</td>
+          <td>{{ fight.ending_time }}</td>
+          <td>{{ fight.winner }}</td>
+          <td>{{ fight.winning_method }}</td>
+          <td>{{ fight.date }}</td>
+          <td>{{ fight.event }}</td>
+          <td>{{ fight.fight_order }}</td>
+          <td>{{ fight.weight_class }}</td>
+          <td>{{ fight.draw }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

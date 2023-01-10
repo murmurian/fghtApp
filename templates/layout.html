@@ -1,0 +1,18 @@
+<!doctype html>
+<title>FghtApp - {% block title %}{% endblock %}</title>
+<h1>FghtApp</h1>
+<a href="/">Home</a>
+<a href="/login">Login</a>
+<a href="/logout">Logout</a>
+<a href="/register">Register</a>
+<a href="/fighters">Fighters</a>
+{% if session.user_id is defined and users.is_admin(session["user_id"]) %}
+    <a href="/fighters/new">Add fighter</a>
+{% endif %}
+<a href="/fights">Fights</a>
+{% if session.user_id is defined and users.is_admin(session["user_id"]) %}
+    <a href="/fights/new">Add fight</a>
+{% endif %}
+<hr>
+{% block content %}{% endblock %}
+<hr>

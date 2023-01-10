@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Error!</title>
-    </head>
-    <body>
-        <h1>Oops! Something went wrong!</h1>
-        <p>{{ message }}</p>
-</html>
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1>Oops! Something went wrong!</h1>
+    <p>{{ message }}</p>
+{% endblock %}

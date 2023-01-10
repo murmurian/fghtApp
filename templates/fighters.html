@@ -1,19 +1,27 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Fighters</title>
-  </head>
-  <body>
-    <h1>Fighters</h1>
-    <p>There are {{ count }} fighters in the database:</p>
-    <ul>
-      {% for fighter in messages %}
-      <li>
-        {{ fighter.firstname }} {% if fighter.nickname %}"{{ fighter.nickname }}"{% endif %} {{ fighter.lastname }} ({{ fighter.born }}, {{ fighter.age }} years old)
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Fighters</h1>
+<form method="POST" action="{{ url_for('fighters_route') }}">
+    {{ form.csrf_token }}
+    <div class="form-group">
+        <label for="q">Search</label>
+        {{ form.q(class='form-control') }}
+        {% for error in form.q.errors %}
+            <p class="text-danger">{{ error }}</p>
+        {% endfor %}
+    </div>
+    <button class="btn btn-primary" type="submit">Search</button>
+</form>
+<p>There are {{ count }} fighters in the database:</p>
+<ul>
+    {% for fighter in messages %}
+    <li>
+        {{ fighter.firstname }} {% if fighter.nickname %}"{{ fighter.nickname }}"{% endif %} {{ fighter.lastname }} ({{
+        fighter.born }}, {{ fighter.age }} years old)
         <br>
-        Height: {{ fighter.height }} m | Weight: {{ fighter.weight }} kg | Country: {{ fighter.country_name }}
-      </li>
-      {% endfor %}
-    </ul>
-  </body>
-</html>
+        Height: {{ fighter.height }} inches | Weight: {{ fighter.weight }} kg | Country: {{ fighter.country_name }}
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

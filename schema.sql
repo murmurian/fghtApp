@@ -30,20 +30,21 @@ CREATE TABLE countries (
 
 CREATE TABLE fights (
   id SERIAL PRIMARY KEY,
-  fighter1 INTEGER REFERENCES fighters(id),
-  fighter2 INTEGER REFERENCES fighters(id),
-  referee INTEGER REFERENCES referees(id),
-  rounds SMALLINT,
-  ending_round SMALLINT,
+  fighter1 INTEGER REFERENCES fighters(id) NOT NULL,
+  fighter2 INTEGER REFERENCES fighters(id) NOT NULL,
+  referee INTEGER REFERENCES referees(id) DEFAULT 1,
+  rounds SMALLINT DEFAULT 3 NOT NULL,
   ending_time TIME,  
-  winner INTEGER REFERENCES fighters(id),
+  winner INTEGER REFERENCES fighters(id) NOT NULL,
+  draw BOOLEAN DEFAULT FALSE,
   winning_method TEXT,
-  date DATE,
-  event INTEGER,
+  date TIMESTAMP NOT NULL,
+  event INTEGER NOT NULL,
   fight_order INTEGER,
-  weight_class SMALLINT,
+  weight_class SMALLINT NOT NULL,
   CONSTRAINT unique_fight UNIQUE (fighter1, fighter2, date)
 );
+
 
 CREATE INDEX event_idx ON fights (event);
 
