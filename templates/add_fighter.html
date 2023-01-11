@@ -1,30 +1,44 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Add Fighter</title>
-  </head>
-  <body>
-    <h1>Add a New Fighter</h1>
-    <form action="/add_fighter" method="post">
-      <label for="firstname">First Name:</label><br>
-      <input type="text" id="firstname" name="firstname"><br>
-      <label for="lastname">Last Name:</label><br>
-      <input type="text" id="lastname" name="lastname"><br>
-      <label for="nickname">Nickname:</label><br>
-      <input type="text" id="nickname" name="nickname"><br>
-      <label for="born">Born:</label><br>
-      <input type="date" id="born" name="born"><br>
-      <label for="height">Height:</label><br>
-      <input type="text" id="height" name="height"><br>
-      <label for="weight">Weight:</label><br>
-      <input type="text" id="weight" name="weight"><br>
-      <label for="country">Country:</label><br>
-      <select id="country" name="country">
-        {% for country in countries %}
-        <option value="{{ country.name }}">{{ country.name }}</option>
-        {% endfor %}
-      </select><br><br>
-      <input type="submit" value="Submit">
-    </form> 
-  </body>
-</html>
+{% extends "layout.html" %}
+
+{% block content %}
+    <h1>Add a new fighter</h1>
+    <form method="POST" action="{{ url_for('add_fighter') }}">
+        {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
+        <div class="form-group">
+            <label for="{{ form.firstname.id }}">First name</label>
+            {{ form.firstname(class="form-control") }}
+            {% for error in form.firstname.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.lastname.id }}">Last name</label>
+            {{ form.lastname(class="form-control") }}
+            {% for error in form.lastname.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.nickname.id }}">Nickname</label>
+            {{ form.nickname(class="form-control") }}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.born.id }}">{{ form.born.label }}</label>
+          {{ form.born(class="form-control") }}
+        </div>      
+        <div class="form-group">
+            <label for="{{ form.height.id }}">Height</label>
+            {{ form.height(class="form-control") }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.weight.id }}">Weight</label>
+            {{ form.weight(class="form-control") }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.country.id }}">Country</label>
+            {{ form.country(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary">Add fighter</button>
+    </form>
+{% endblock %}

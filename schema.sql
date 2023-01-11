@@ -39,7 +39,7 @@ CREATE TABLE fights (
   draw BOOLEAN DEFAULT FALSE,
   winning_method TEXT,
   date TIMESTAMP NOT NULL,
-  event INTEGER NOT NULL,
+  event INTEGER,
   fight_order INTEGER,
   weight_class SMALLINT NOT NULL,
   CONSTRAINT unique_fight UNIQUE (fighter1, fighter2, date)

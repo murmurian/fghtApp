@@ -7,12 +7,17 @@
 <a href="/register">Register</a>
 <a href="/fighters">Fighters</a>
 {% if session.user_id is defined and users.is_admin(session["user_id"]) %}
-    <a href="/fighters/new">Add fighter</a>
+<a href="/fighters/new">Add fighter</a>
 {% endif %}
 <a href="/fights">Fights</a>
 {% if session.user_id is defined and users.is_admin(session["user_id"]) %}
-    <a href="/fights/new">Add fight</a>
+<a href="/fights/new">Add fight</a>
 {% endif %}
 <hr>
+
+{% for message in get_flashed_messages() %}
+    <div class="flash-message">{{ message }}</div>
+{% endfor %}
+
 {% block content %}{% endblock %}
 <hr>

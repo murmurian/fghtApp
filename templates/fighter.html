@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block title %} {{ fighter.firstname }} {{ fighter.lastname }} {% endblock %}
+
+{% block content %}
+<h2>{{ fighter.firstname }} {{ fighter.lastname }}</h2>
+<p>Nickname: {{ fighter.nickname }}</p>
+<p>Country: {{ fighter.country }}</p>
+<p>Born: {{ fighter.born }}</p>
+<p>Height: {{ fighter.height }} ft. in.</p>
+<p>Weight: {{ fighter.weight }} lbs</p>
+<h3>Fights</h3>
+<table>
+    <tr>
+        <th>Opponent</th>
+        <th>Result</th>
+        <th>Winning Method</th>
+        <th>Date</th>
+    </tr>
+    {% for fight in fights %}
+    <tr>
+        <td>
+            {% if fighter.id == fight.fighter1 %}
+            {{ fight.f2_firstname }} {{ fight.f2_lastname }}
+            {% else %}
+            {{ fight.f1_firstname }} {{ fight.f1_lastname }}
+            {% endif %}
+        </td>
+        <td>
+            {% if fight.winner == fighter.id %}
+            Win
+            {% elif fight.draw %}
+            Draw
+            {% else %}
+            Loss
+            {% endif %}
+        </td>
+        <td>{{ fight.winning_method }}</td>
+        <td>{{ fight.date }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

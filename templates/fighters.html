@@ -15,7 +15,7 @@
 </form>
 <p>There are {{ count }} fighters in the database:</p>
 <ul>
-    {% for fighter in messages %}
+    {% for fighter in fighters %}
     <li>
         {{ fighter.firstname }} {% if fighter.nickname %}"{{ fighter.nickname }}"{% endif %} {{ fighter.lastname }} ({{
         fighter.born }}, {{ fighter.age }} years old)

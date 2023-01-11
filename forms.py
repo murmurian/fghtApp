@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, validators
+from wtforms import StringField, PasswordField, SelectField, DateField, validators
 
 
 class RegistrationForm(FlaskForm):
@@ -11,3 +11,14 @@ class RegistrationForm(FlaskForm):
 
 class SearchForm(FlaskForm):
     q = StringField('Search', [validators.Length(max=30, message='Search term must be less than 30 characters')])
+
+
+class FighterForm(FlaskForm):
+    firstname = StringField('First Name', validators=[validators.DataRequired()])
+    lastname = StringField('Last Name', validators=[validators.DataRequired()])
+    nickname = StringField('Nickname')
+    born = DateField('Born', format='%Y-%m-%d')
+    height = StringField('Height')
+    weight = StringField('Weight')
+    country = SelectField('Country', coerce=int)
+
