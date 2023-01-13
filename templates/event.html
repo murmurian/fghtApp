@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <h1>{{ event.name }}</h1>
+    <p>Date: {{ event.date }}</p>
+    <p>Location: {{ event.location }}</p>
+    <p>Promotion: {{ event.promotion }}</p>
+    <h2>Fights</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Fight Order</th>
+                <th>Fighter 1</th>
+                <th>Fighter 2</th>
+                <th>Referee</th>
+                <th>Rounds</th>
+                <th>Ending Time</th>
+                <th>Winner</th>
+                <th>Winning Method</th>
+                <th>Weight Class</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fight in fights %}
+                <tr>
+                    <td>{{ fight.fight_order }}</td>
+                    <td>{{ fight.fighter1.firstname }} {{ fight.fighter1.lastname }}</td>
+                    <td>{{ fight.fighter2.firstname }} {{ fight.fighter2.lastname }}</td>
+                    <td>{{ fight.referee.firstname }} {{ fight.referee.lastname }}</td>
+                    <td>{{ fight.rounds }}</td>
+                    <td>{{ fight.ending_time }}</td>
+                    <td>{{ fight.winner.firstname }} {{ fight.winner.lastname }}</td>
+                    <td>{{ fight.winning_method }}</td>
+                    <td>{{ fight.weight_class }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,23 +1,47 @@
 <!doctype html>
-<title>FghtApp - {% block title %}{% endblock %}</title>
-<h1>FghtApp</h1>
-<a href="/">Home</a>
-<a href="/login">Login</a>
-<a href="/logout">Logout</a>
-<a href="/register">Register</a>
-<a href="/fighters">Fighters</a>
-{% if session.user_id is defined and users.is_admin(session["user_id"]) %}
-<a href="/fighters/new">Add fighter</a>
-{% endif %}
-<a href="/fights">Fights</a>
-{% if session.user_id is defined and users.is_admin(session["user_id"]) %}
-<a href="/fights/new">Add fight</a>
-{% endif %}
-<hr>
-
-{% for message in get_flashed_messages() %}
-    <div class="flash-message">{{ message }}</div>
-{% endfor %}
-
-{% block content %}{% endblock %}
-<hr>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.3/dist/slate/bootstrap.min.css">
+<link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
+<title>FghtApp</title>
+<div class="container">
+    <nav class="navbar navbar-expand-sm navbar-light bg-dark">
+        <div class="navbar-brand custom">
+            <span contenteditable="true">Fight</span>
+            <span contenteditable="true">App</span>
+        </div>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/logout">Logout</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/register">Register</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/fighters">Fighters</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/fights">Fights</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/events">Events</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/admin">Admin</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="row">
+        <div class="col-8">
+            {% block content %}{% endblock %}
+        </div>
+        <div class="col-4">
+            <h2>Did you know?</h2>
+            {% for message in get_flashed_messages() %}
+            <div class="flash-message">{{ message }}</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

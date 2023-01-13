@@ -1,44 +1,46 @@
 {% extends "layout.html" %}
-
+{% block title %}
+{% if is_new %}Add new fighter{% else %}Edit fighter{% endif %}
+{% endblock %}
 {% block content %}
-    <h1>Add a new fighter</h1>
-    <form method="POST" action="{{ url_for('add_fighter') }}">
-        {{ form.hidden_tag() }}
-        {{ form.csrf_token }}
-        <div class="form-group">
-            <label for="{{ form.firstname.id }}">First name</label>
-            {{ form.firstname(class="form-control") }}
-            {% for error in form.firstname.errors %}
-                <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div class="form-group">
-            <label for="{{ form.lastname.id }}">Last name</label>
-            {{ form.lastname(class="form-control") }}
-            {% for error in form.lastname.errors %}
-                <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div class="form-group">
-            <label for="{{ form.nickname.id }}">Nickname</label>
-            {{ form.nickname(class="form-control") }}
-        </div>
-        <div class="form-group">
-          <label for="{{ form.born.id }}">{{ form.born.label }}</label>
-          {{ form.born(class="form-control") }}
-        </div>      
-        <div class="form-group">
-            <label for="{{ form.height.id }}">Height</label>
-            {{ form.height(class="form-control") }}
-        </div>
-        <div class="form-group">
-            <label for="{{ form.weight.id }}">Weight</label>
-            {{ form.weight(class="form-control") }}
-        </div>
-        <div class="form-group">
-            <label for="{{ form.country.id }}">Country</label>
-            {{ form.country(class="form-control") }}
-        </div>
-        <button type="submit" class="btn btn-primary">Add fighter</button>
-    </form>
+<h1>{% if is_new %}Add a new{% else %}Edit{% endif %} fighter</h1>
+<form method="POST" action="{% if is_new %}{{ url_for('add_fighter') }}{% else %}{{ url_for('edit_fighter', fighter_id=fighter_id) }}{% endif %}">
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    <div class="form-group">
+        <label for="{{ form.firstname.id }}">First name</label>
+        {{ form.firstname(class="form-control") }}
+        {% for error in form.firstname.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        <label for="{{ form.lastname.id }}">Last name</label>
+        {{ form.lastname(class="form-control") }}
+        {% for error in form.lastname.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        <label for="{{ form.nickname.id }}">Nickname</label>
+        {{ form.nickname(class="form-control") }}
+    </div>
+    <div class="form-group">
+        <label for="{{ form.born.id }}">{{ form.born.label }}</label>
+        {{ form.born(class="form-control") }}
+    </div>
+    <div class="form-group">
+        <label for="{{ form.height.id }}">Height</label>
+        {{ form.height(class="form-control") }}
+    </div>
+    <div class="form-group">
+        <label for="{{ form.weight.id }}">Weight</label>
+        {{ form.weight(class="form-control") }}
+    </div>
+    <div class="form-group">
+        <label for="{{ form.country.id }}">Country</label>
+        {{ form.country(class="form-control") }}
+    </div>
+    <button type="submit" class="btn btn-primary">Add fighter</button>
+</form>
 {% endblock %}

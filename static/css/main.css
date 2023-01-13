@@ -1,0 +1,35 @@
+.navbar-brand span:nth-child(1) {
+  color: #ffffff;
+  font-family: sans-serif !important;
+  font-weight: bold !important;
+  display: inline-block;
+}
+
+.navbar-brand span:nth-child(2) {
+  background: #FF9900;
+  color: #000000 !important;
+  border-radius: 1vw;
+  padding: 0 0.3vw 0.2vw 0.3vw;
+  display: inline-block;
+}
+
+.hub {
+  display: block;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 3vw;
+  text-align: center;
+  position: fixed;
+  top: 5%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+}
+
+.hub span:nth-child(2) {
+  background: #FF9900;
+  color: #000000;
+  border-radius: 1vw;
+  padding: 0 1vw 0.6vw 1vw;
+  display: inline-block;
+}

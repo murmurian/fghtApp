@@ -1,8 +1,9 @@
 {% extends 'layout.html' %}
-{% block title %}Add Fight{% endblock %}
+{% block title %}Add new fight{% endblock %}
 {% block content %}
 <h1>Add Fight</h1>
 <form method="POST" action="{{ url_for('add_fight') }}">
+    {{ form.hidden_tag() }}
     {{ form.csrf_token }}
     <div class="form-group">
         <label for="fighter1">Fighter 1</label>
@@ -32,10 +33,20 @@
         <label for="rounds">Rounds</label>
         {{ form.rounds(class='form-control') }}
     </div>
-    <div class="form-group">
-        <label for="ending_time">Ending Time</label>
-        {{ form.ending_time(class='form-control') }}
-    </div>
+    <div class="form-group row">
+        <div class="col-md-4">
+            <label for="ending_round">Ending Round</label>
+            {{ form.ending_round(class='form-control') }}
+        </div>
+        <div class="col-md-4">
+            <label for="minutes">Minutes</label>
+            {{ form.minutes(class='form-control') }}
+        </div>
+        <div class="col-md-4">
+            <label for="seconds">Seconds</label>
+            {{ form.seconds(class='form-control') }}
+        </div>
+    </div>    
     <div class="form-group">
         <label for="winner">Winner</label>
         <select id="winner" name="winner" class="form-control">
@@ -62,12 +73,12 @@
     </div>
     <div class="form-group">
         <label for="weight_class">Weight Class</label>
-        {{ form.weight_class(class='form-control') }}
-    </div>
-    <div class="form-group">
-        <label for="draw">Draw</label>
-        {{ form.draw(class='form-control') }}
-    </div>
+        <select id="weight_class" name="weight_class" class="form-control">
+            {% for value, label in form.weight_class.choices %}
+            <option value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>    
     <button class="btn btn-primary" type="submit">Submit</button>
 
 </form>
