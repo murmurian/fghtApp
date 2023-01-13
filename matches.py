@@ -24,19 +24,35 @@ def get_fights(fighter_id):
     return result.fetchall()
 
 
+def get_fightlist():
+    sql = """SELECT f.*,
+        f1.firstname AS f1_firstname, f1.lastname AS f1_lastname,
+        f2.firstname AS f2_firstname, f2.lastname AS f2_lastname,
+        r.firstname AS r_firstname, r.lastname AS r_lastname, e.name AS event_name
+        FROM fights f
+        LEFT JOIN fighters f1 ON f.fighter1 = f1.id
+        LEFT JOIN fighters f2 ON f.fighter2 = f2.id
+        LEFT JOIN referees r ON f.referee = r.id
+        LEFT JOIN events e ON f.event = e.id
+        ORDER BY f.date DESC LIMIT 10"""
+    result = db.session.execute(sql)
+    return result.fetchall()
+
+
 def add_fight(form):
     fighter1 = form.fighter1.data
     fighter2 = form.fighter2.data
     referee = form.referee.data
     rounds = form.rounds.data
     ending_time = calculate_ending_time(form)
-    if form.winner.data == "-1":
+    if form.winner.data == -1:
         winner = None
+        draw = True
     else:
         winner = form.winner.data
     method = form.winning_method.data
     date = form.date.data
-    if form.event.data == "-1":
+    if form.event.data == -1:
         event = None
     else:
         event = form.event.data
@@ -49,9 +65,9 @@ def add_fight(form):
     if existing_fight:
         return False
 
-    sql = "INSERT INTO fights (fighter1, fighter2, referee, rounds, ending_time, winner, winning_method, date, event, fight_order, weight_class) VALUES (:fighter1, :fighter2, :referee, :rounds, :ending_time, :winner, :method, :date, :event, :fight_order, :weight_class)"
+    sql = "INSERT INTO fights (fighter1, fighter2, referee, rounds, ending_time, winner, draw, winning_method, date, event, fight_order, weight_class) VALUES (:fighter1, :fighter2, :referee, :rounds, :ending_time, :winner, :draw, :method, :date, :event, :fight_order, :weight_class)"
     db.session.execute(sql, {"fighter1": fighter1, "fighter2": fighter2, "referee": referee,
-                       "rounds": rounds, "ending_time": ending_time, "winner": winner, "method": method, "date": date, "event": event, "fight_order": fight_order, "weight_class": weight_class})
+                       "rounds": rounds, "ending_time": ending_time, "winner": winner, "draw":draw, "method": method, "date": date, "event": event, "fight_order": fight_order, "weight_class": weight_class})
     db.session.commit()
     return True
 

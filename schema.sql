@@ -35,7 +35,7 @@ CREATE TABLE fights (
   referee INTEGER REFERENCES referees(id) DEFAULT 1,
   rounds SMALLINT DEFAULT 3 NOT NULL,
   ending_time TIME,  
-  winner INTEGER REFERENCES fighters(id) NOT NULL,
+  winner INTEGER REFERENCES fighters(id),
   draw BOOLEAN DEFAULT FALSE,
   winning_method TEXT,
   date TIMESTAMP NOT NULL,

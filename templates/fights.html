@@ -1,47 +1,50 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Fights</title>
-</head>
-<body>
-  <h1>Fights</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Id</th>
-        <th>Fighter 1</th>
-        <th>Fighter 2</th>
-        <th>Referee</th>
-        <th>Rounds</th>
-        <th>Ending Time</th>
-        <th>Winner</th>
-        <th>Winning Method</th>
-        <th>Date</th>
-        <th>Event</th>
-        <th>Fight Order</th>
-        <th>Weight Class</th>
-        <th>Draw</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for fight in fights %}
-        <tr>
-          <td>{{ fight.id }}</td>
-          <td>{{ fight.f1_firstname }} {{ fight.f1_lastname }}</td>
-          <td>{{ fight.f2_firstname }} {{ fight.f2_lastname }}</td>
-          <td>{{ fight.ref_firstname }} {{ fight.ref_lastname }}</td>
-          <td>{{ fight.rounds }}</td>
-          <td>{{ fight.ending_time }}</td>
-          <td>{{ fight.winner }}</td>
-          <td>{{ fight.winning_method }}</td>
-          <td>{{ fight.date }}</td>
-          <td>{{ fight.event }}</td>
-          <td>{{ fight.fight_order }}</td>
-          <td>{{ fight.weight_class }}</td>
-          <td>{{ fight.draw }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</body>
-</html>
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h1>Fights</h1>
+
+<table class="table table-dark">
+  <thead>
+    <tr>
+      <th scope="col">Fight</th>
+      <th scope="col">Event</th>
+      <th scope="col">Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for fight in fights %}
+    <tr>
+      <td>
+        <a href="{{ url_for('fight_detail', fight_id = fight.id) }}">
+          {% if fight.fighter1 == fight.winner %}
+          {{ fight.f1_firstname }} {{ fight.f1_lastname }}
+          {% else %}
+          {{ fight.f2_firstname }} {{ fight.f2_lastname }}
+          {% endif %}
+          {% if fight.draw %}
+          -
+          {% else %}
+          def
+          {% endif %}
+          {% if fight.fighter1 == fight.winner %}
+          {{ fight.f2_firstname }} {{ fight.f2_lastname }}
+          {% else %}
+          {{ fight.f1_firstname }} {{ fight.f1_lastname }}
+          {% endif %}
+        </a>
+      </td>
+      <td>
+        {% if fight.event != None %}
+        {{ fight.event_name }}
+        {% else %}
+        N/A
+        {% endif %}
+      </td>
+      <td>{{ fight.date }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

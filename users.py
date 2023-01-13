@@ -39,3 +39,11 @@ def is_admin(user_id):
         "SELECT admin FROM users WHERE id = :id", {"id": user_id})
     user = result.fetchone()    
     return user.admin
+
+
+def authorize():
+    if not session.get("user_id"):
+        return False
+    if not is_admin(session["user_id"]):
+        return False
+    return True

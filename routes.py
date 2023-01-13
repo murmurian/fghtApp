@@ -1,7 +1,7 @@
 from app import app
 from db import db
 from flask import flash, redirect, render_template, request, session
-from forms import FighterForm, OfficialsForm, RegistrationForm, SearchForm, FightForm
+from forms import FighterForm, OfficialsForm, RegistrationForm, SearchForm, FightForm, LoginForm
 import users, persons, matches
 
 
@@ -12,15 +12,20 @@ def index():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if session.get("user_id"):
+        flash("You are already logged in!")
+        return redirect("/")
+    form = LoginForm()
+    username = form.username.data
+    password = form.password.data
     if request.method == "GET":
-        return render_template("login.html")
-    username = request.form["username"]
-    password = request.form["password"]
+        return render_template("login.html", form=form, session=session)
     if users.login(username, password):
+        flash("Welcome back, " + username + "!")
         return redirect("/")
     else:
         flash("No such username or password")
-    return render_template("login.html")
+    return render_template("login.html", form=form, session=session)
 
 
 @app.route("/logout")
@@ -68,7 +73,7 @@ def fighters_route():
 
 @app.route("/fighters/new", methods=["GET", "POST"])
 def add_fighter():
-    if not users.is_admin(session.get("user_id")):
+    if not users.authorize():
         flash("You are not authorized to add fighters")
         return redirect("/fighters")
     form = FighterForm()
@@ -83,7 +88,7 @@ def add_fighter():
 
 @app.route("/fighters/edit/<int:fighter_id>", methods=["GET", "POST"])
 def edit_fighter(fighter_id):
-    if not users.is_admin(session.get("user_id")):
+    if not users.authorize():
         flash("You are not authorized to edit fighters")
         return redirect("/fighters/" + str(fighter_id))
     form = FighterForm()
@@ -106,15 +111,13 @@ def fighter_detail(fighter_id):
 
 @app.route("/fights")
 def fights_route():
-    result = db.session.execute(
-        "SELECT fights.*, f1.firstname as f1_firstname, f1.lastname as f1_lastname, f2.firstname as f2_firstname, f2.lastname as f2_lastname, r.firstname as ref_firstname, r.lastname as ref_lastname FROM fights JOIN fighters f1 ON f1.id = fights.fighter1 JOIN fighters f2 ON f2.id = fights.fighter2 JOIN referees r ON r.id = fights.referee")
-    fights = result.fetchall()
+    fights = matches.get_fightlist()
     return render_template("fights.html", count=len(fights), fights=fights)
 
 
 @app.route("/fights/new", methods=["GET", "POST"])
 def add_fight():
-    if not users.is_admin(session.get("user_id")):
+    if not users.authorize():
         flash("You are not authorized to add fights")
         return redirect("/fights")
     form = FightForm()
@@ -134,11 +137,21 @@ def add_fight():
         else:
             flash("Fight already exists")
     return render_template("add_fight.html", form=form)
+
+
+@app.route("/fights/<int:fight_id>")
+def fight_detail(fight_id):
+    fight = matches.get_fight(fight_id)
+    if fight:
+        return render_template("fight.html", fight=fight)
+    else:
+        flash("Fight not found")
+        return redirect("/fights")
         
 
 @app.route("/referees/new", methods=["GET", "POST"])
 def add_referee():
-    if not users.is_admin(session.get("user_id")):
+    if not users.authorize():
         flash("You are not authorized to add referees")
         return redirect("/referees")
     form = OfficialsForm()

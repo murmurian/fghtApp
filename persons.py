@@ -24,7 +24,7 @@ def add_fighter(form):
     lastname = form.lastname.data
     nickname = form.nickname.data
     born = form.born.data
-    height = form.height.data
+    height = format_height(form.feet.data, form.inches.data)
     weight = form.weight.data
     country = form.country.data
 
@@ -47,7 +47,7 @@ def edit_fighter(form, fighter_id):
     lastname = form.lastname.data
     nickname = form.nickname.data
     born = form.born.data
-    height = form.height.data
+    height = format_height(form.feet.data, form.inches.data)
     weight = form.weight.data
     country = form.country.data
 
@@ -58,7 +58,6 @@ def edit_fighter(form, fighter_id):
 
 
 def add_referee(form):
-    print(form.data)
     firstname = form.firstname.data
     lastname = form.lastname.data
     
@@ -77,3 +76,7 @@ def get_weight_classes():
     weight_classes = [(115, "Strawweight"), (125, "Flyweight"), (135, "Bantamweight"), (145, "Featherweight"), (155, "Lightweight"), (170, "Welterweight"), (185, "Middleweight"), (205, "Light Heavyweight"), (265, "Heavyweight"), (115, "Women's Strawweight"), (125, "Women's Flyweight"),
                       (135, "Women's Bantamweight"), (145, "Women's Featherweight"), (155, "Women's Lightweight"), (0, "Catchweight"), (500, "Open Weight")]
     return weight_classes
+
+
+def format_height(feet, inches):
+    return str(feet) + "." + str(inches)

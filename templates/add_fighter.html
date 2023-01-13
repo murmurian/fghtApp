@@ -22,25 +22,31 @@
         {% endfor %}
     </div>
     <div class="form-group">
-        <label for="{{ form.nickname.id }}">Nickname</label>
+        <label for="{{ form.nickname.id }}">Nickname (optional)</label>
         {{ form.nickname(class="form-control") }}
     </div>
     <div class="form-group">
         <label for="{{ form.born.id }}">{{ form.born.label }}</label>
         {{ form.born(class="form-control") }}
     </div>
-    <div class="form-group">
-        <label for="{{ form.height.id }}">Height</label>
-        {{ form.height(class="form-control") }}
+    <div class="form-group row">
+        <div class="col-sm-6">
+            <label for="{{ form.feet.id }}">Feet</label>
+            {{ form.feet(class="form-control") }}
+        </div>
+        <div class="col-sm-6">
+            <label for="{{ form.inches.id }}">Inches</label>
+            {{ form.inches(class="form-control") }}
+        </div>
     </div>
     <div class="form-group">
-        <label for="{{ form.weight.id }}">Weight</label>
+        <label for="{{ form.weight.id }}">Weight (lbs)</label>
         {{ form.weight(class="form-control") }}
     </div>
     <div class="form-group">
         <label for="{{ form.country.id }}">Country</label>
         {{ form.country(class="form-control") }}
     </div>
-    <button type="submit" class="btn btn-primary">Add fighter</button>
+    <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 {% endblock %}
