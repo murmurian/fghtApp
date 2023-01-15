@@ -37,8 +37,9 @@ def register(username, password):
 def is_admin(user_id):
     result = db.session.execute(
         "SELECT admin FROM users WHERE id = :id", {"id": user_id})
-    user = result.fetchone()    
-    return user.admin
+    user = result.fetchone()
+    if user:    
+        return user.admin
 
 
 def authorize():

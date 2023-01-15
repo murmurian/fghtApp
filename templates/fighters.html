@@ -1,27 +1,24 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h1>Fighters</h1>
-<form method="POST" action="{{ url_for('fighters_route') }}">
-    {{ form.csrf_token }}
-    <div class="form-group">
-        <label for="q">Search</label>
-        {{ form.q(class='form-control') }}
-        {% for error in form.q.errors %}
-            <p class="text-danger">{{ error }}</p>
+
+<div class="container">
+    <h1 class="text-center my-3">Fighters</h1>
+    <form method="POST" action="{{ url_for('fighters_route') }}" class="form-inline my-3">
+        {{ form.csrf_token }}
+        <div class="form-group mx-sm-3">
+            <label for="q" class="sr-only">Search</label>
+            {{ form.q(class='form-control', placeholder='Search') }}
+        </div>
+        <button class="btn btn-primary" type="submit">Search</button>
+    </form>
+    <p>There are {{ count }} fighters in the database:</p>
+    <ul class="list-group">
+        {% for fighter in fighters %}
+        <li class="list-group-item">
+            <a href="{{ url_for('fighter_profile', fighter_id=fighter.id) }}">{{ fighter.firstname }} {% if fighter.nickname %}"{{ fighter.nickname }}"{% endif %} {{ fighter.lastname }} ({{ fighter.born }}), {{ fighter.country_name }}</a>
+        </li>
         {% endfor %}
-    </div>
-    <button class="btn btn-primary" type="submit">Search</button>
-</form>
-<p>There are {{ count }} fighters in the database:</p>
-<ul>
-    {% for fighter in fighters %}
-    <li>
-        {{ fighter.firstname }} {% if fighter.nickname %}"{{ fighter.nickname }}"{% endif %} {{ fighter.lastname }} ({{
-        fighter.born }}, {{ fighter.age }} years old)
-        <br>
-        Height: {{ fighter.height }} inches | Weight: {{ fighter.weight }} kg | Country: {{ fighter.country_name }}
-    </li>
-    {% endfor %}
-</ul>
-{% endblock %}
+    </ul>
+</div>
+{% endblock %}"

@@ -47,6 +47,9 @@ def admin():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    if session.get("user_id"):
+        flash("Please log out before registering a new account")
+        return redirect("/")
     form = RegistrationForm()
     if form.validate_on_submit():
         username = form.username.data
@@ -91,19 +94,33 @@ def edit_fighter(fighter_id):
     if not users.authorize():
         flash("You are not authorized to edit fighters")
         return redirect("/fighters/" + str(fighter_id))
+    fighter = persons.get_fighter(fighter_id)
     form = FighterForm()
-    form.country.choices=[(country.id, country.name) for country in matches.get_countries()]        
+    form.country.default = fighter.country_id
+    form.country.choices=[(country.id, country.name) for country in matches.get_countries()]
     if request.method == "POST" and form.validate_on_submit():
         persons.edit_fighter(form, fighter_id)
         flash("Fighter info updated")
-    return render_template("add_fighter.html", form=form, is_new=False, fighter_id=fighter_id)
+    return render_template("add_fighter.html", form=form, is_new=False, fighter=fighter)
+
+
+@app.route("/fighters/delete/<int:fighter_id>")
+def delete_fighter(fighter_id):
+    if not users.authorize():
+        flash("You are not authorized to delete fighters")
+        return redirect("/fighters/edit/" + str(fighter_id))
+    persons.delete_fighter(fighter_id)
+    flash("Fighter deleted")
+    return redirect("/fighters")
+
 
 @app.route("/fighters/<int:fighter_id>")
-def fighter_detail(fighter_id):
+def fighter_profile(fighter_id):
     fighter = persons.get_fighter(fighter_id)
-    fights = matches.get_fights(fighter_id)
+    fights = matches.fights_by_id(fighter_id)
+    is_admin = users.is_admin(session.get("user_id"))
     if fighter:
-        return render_template("fighter.html", fighter=fighter, fights=fights)
+        return render_template("fighter.html", fighter=fighter, fights=fights, is_admin=is_admin)
     else:
         flash("Fighter not found")
         return redirect("/fighters")
@@ -121,10 +138,10 @@ def add_fight():
         flash("You are not authorized to add fights")
         return redirect("/fights")
     form = FightForm()
-    form.fighter1.choices=[(fighter.id, fighter.firstname + " " + fighter.lastname) for fighter in persons.get_fighters()]
-    form.fighter2.choices=[(fighter.id, fighter.firstname + " " + fighter.lastname) for fighter in persons.get_fighters()]
+    form.fighter1.choices=[(fighter.id, fighter.lastname + ", " + fighter.firstname) for fighter in persons.get_fighters()]
+    form.fighter2.choices=[(fighter.id, fighter.lastname + ", " + fighter.firstname) for fighter in persons.get_fighters()]
     form.winner.choices= [(-1, "Draw")] + [(fighter.id, fighter.firstname + " " + fighter.lastname) for fighter in persons.get_fighters()]
-    form.referee.choices=[(referee.id, referee.firstname + " " + referee.lastname) for referee in persons.get_referees()]
+    form.referee.choices=[(referee.id, referee.lastname + ", " + referee.firstname) for referee in persons.get_referees()]
     form.event.choices = [(-1, "N/A")] + [(event.id, event.name) for event in matches.get_events()]
     form.weight_class.choices = persons.get_weight_classes()
     if not form.validate_on_submit():
@@ -139,11 +156,31 @@ def add_fight():
     return render_template("add_fight.html", form=form)
 
 
+@app.route("/fights/edit/<int:fight_id>", methods=["GET", "POST"])
+def edit_fight(fight_id):
+    if not users.authorize():
+        flash("You are not authorized to edit fights")
+        return redirect("/fights/" + str(fight_id))
+    fight = matches.get_fight(fight_id)
+    form = FightForm()
+    form.fighter1.choices=[(fighter.id, fighter.lastname + ", " + fighter.firstname) for fighter in persons.get_fighters()]
+    form.fighter2.choices=[(fighter.id, fighter.lastname + ", " + fighter.firstname) for fighter in persons.get_fighters()]
+    form.winner.choices= [(-1, "Draw")] + [(fighter.id, fighter.firstname + " " + fighter.lastname) for fighter in persons.get_fighters()]
+    form.referee.choices=[(referee.id, referee.lastname + ", " + referee.firstname) for referee in persons.get_referees()]
+    form.event.choices = [(-1, "N/A")] + [(event.id, event.name) for event in matches.get_events()]
+    form.weight_class.choices = persons.get_weight_classes()    
+    if request.method == "POST" and form.validate_on_submit():
+        matches.edit_fight(form, fight_id)
+        flash("Fight info updated")
+    return render_template("add_fight.html", form=form, is_new=False, fight=fight)
+
+
 @app.route("/fights/<int:fight_id>")
 def fight_detail(fight_id):
     fight = matches.get_fight(fight_id)
+    is_admin = users.is_admin(session.get("user_id"))
     if fight:
-        return render_template("fight.html", fight=fight)
+        return render_template("fight.html", fight=fight, is_admin=is_admin)
     else:
         flash("Fight not found")
         return redirect("/fights")
@@ -161,6 +198,23 @@ def add_referee():
         else:
             flash("Referee already exists")
     return render_template("add_official.html", form=form)
+
+
+@app.route("/referees")
+def referees_route():
+    referees = persons.get_referees()
+    return render_template("referees.html", count=len(referees), referees=referees)
+
+
+@app.route("/referees/<int:referee_id>")
+def referee_profile(referee_id):
+    referee = persons.get_referee(referee_id)
+    fights = matches.fights_by_referee(referee_id)
+    if referee:
+        return render_template("referee.html", referee=referee, fights=fights)
+    else:
+        flash("Referee not found")
+        return redirect("/referees")
 
 
 @app.route("/events", methods=["GET", "POST"])

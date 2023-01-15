@@ -12,3 +12,18 @@
   padding: 0 0.3vw 0.2vw 0.3vw;
   display: inline-block;
 }
+
+.edit-btn{
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.edit-btn a {
+  margin: 20px;
+}
+
+.fight-card-width{
+  width: 100%;
+}
+

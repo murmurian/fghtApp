@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="card fight-card-width mx-auto">
+    <div class="card-body">
+        <h2 class="card-title text-center">
+            {% if fight.winner == fight.fighter1 %}
+            {{ fight.f1_firstname }} {% if fight.f1_nickname %}"{{ fight.f1_nickname }}"{% endif %} {{ fight.f1_lastname }}
+            {% else %}
+            {{ fight.f2_firstname }} {% if fight.f2_nickname %}"{{ fight.f2_nickname }}"{% endif %} {{ fight.f2_lastname }}
+            {% endif %}
+        </h2>
+        <h3 class="card-title text-center">
+            {% if fight.draw %}vs
+            {% else %}def
+            {% endif %}
+        </h3>
+        <h2 class="card-title text-center">
+            {% if fight.winner == fight.fighter1 %}
+            {{ fight.f2_firstname }} {% if fight.f2_nickname %}"{{ fight.f2_nickname }}"{% endif %} {{ fight.f2_lastname }}
+            {% else %}
+            {{ fight.f1_firstname }} {% if fight.f1_nickname %}"{{ fight.f1_nickname }}"{% endif %} {{ fight.f1_lastname }}
+            {% endif %}
+        </h2>
+        <div class="text-right edit-btn">
+            {% if is_admin %}
+                <a href="{{ url_for('edit_fight', fight_id=fight.id) }}" class="btn btn-primary">Edit</a>
+            {% endif %}
+        </div>     
+    </div>
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <table class="table table-dark text-center">
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Round</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ fight.winning_method }}</td>
+                        <td>{{ fight.rounds }}</td>
+                        <td>{{ fight.ending_time }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-dark text-center">
+                <thead>
+                    <tr>
+                        <th>Referee</th>
+                        <th>Event</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="{{ url_for('referee_profile', referee_id=fight.referee) }}">{{ fight.r_firstname }} {{ fight.r_lastname }}</a></td>
+                        <td>
+                            {% if fight.event != None %}
+                            <a href="{{ url_for('event_detail', event_id=fight.event) }}">{{ fight.event_name }}</a>
+                            {% else %}
+                            N/A
+                            {% endif %}
+                        </td>
+                        <td>{{ fight.date }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

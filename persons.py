@@ -3,19 +3,19 @@ from db import db
 
 def get_fighters():
     result = db.session.execute(
-        "SELECT * FROM fighters")
+        "SELECT * FROM fighters ORDER BY lastname")
     return result.fetchall()
 
 
 def get_fighter(id):
-    sql = "SELECT f.*, c.name as country FROM fighters f JOIN countries c ON f.country = c.id WHERE f.id = :id"
+    sql = "SELECT f.*, c.id AS country_id, c.name AS country_name FROM fighters f JOIN countries c ON f.country = c.id WHERE f.id = :id"
     result = db.session.execute(sql, {"id": id}).fetchone()
     return result
 
 
 def get_referees():
     result = db.session.execute(
-        "SELECT * FROM referees")
+        "SELECT * FROM referees ORDER BY lastname")
     return result.fetchall()
 
 
@@ -54,6 +54,12 @@ def edit_fighter(form, fighter_id):
     sql = "UPDATE fighters SET firstname = :firstname, lastname = :lastname, nickname = :nickname, born = :born, height = :height, weight = :weight, country = :country WHERE id = :id"
     db.session.execute(sql, {"firstname": firstname, "lastname": lastname, "nickname": nickname,
                        "born": born, "height": height, "weight": weight, "country": country, "id": fighter_id})
+    db.session.commit()
+
+
+def delete_fighter(id):
+    sql = "DELETE FROM fighters WHERE id = :id"
+    db.session.execute(sql, {"id": id})
     db.session.commit()
 
 

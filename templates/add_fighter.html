@@ -4,49 +4,65 @@
 {% endblock %}
 {% block content %}
 <h1>{% if is_new %}Add a new{% else %}Edit{% endif %} fighter</h1>
-<form method="POST" action="{% if is_new %}{{ url_for('add_fighter') }}{% else %}{{ url_for('edit_fighter', fighter_id=fighter_id) }}{% endif %}">
+<form method="POST" action="{% if is_new %}{{ url_for('add_fighter') }}{% else %}{{ url_for('edit_fighter', fighter_id=fighter.id) }}{% endif %}">
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}
     <div class="form-group">
         <label for="{{ form.firstname.id }}">First name</label>
-        {{ form.firstname(class="form-control") }}
-        {% for error in form.firstname.errors %}
-        <span class="text-danger">{{ error }}</span>
-        {% endfor %}
+        {{ form.firstname(class="form-control", value=fighter.firstname if not is_new else '') }}
     </div>
     <div class="form-group">
         <label for="{{ form.lastname.id }}">Last name</label>
-        {{ form.lastname(class="form-control") }}
-        {% for error in form.lastname.errors %}
-        <span class="text-danger">{{ error }}</span>
-        {% endfor %}
+        {{ form.lastname(class="form-control", value=fighter.lastname if not is_new else '') }}
     </div>
     <div class="form-group">
         <label for="{{ form.nickname.id }}">Nickname (optional)</label>
-        {{ form.nickname(class="form-control") }}
+        {{ form.nickname(class="form-control", value=fighter.nickname if not is_new else '') }}
     </div>
     <div class="form-group">
         <label for="{{ form.born.id }}">{{ form.born.label }}</label>
-        {{ form.born(class="form-control") }}
+        {{ form.born(class="form-control", value=fighter.born if not is_new else '') }}
     </div>
     <div class="form-group row">
+        {% if not is_new %}
+        {% set float_string = fighter.height|string %}
+        {% set height_parts = float_string.split('.') %}
+        {% endif %}
         <div class="col-sm-6">
             <label for="{{ form.feet.id }}">Feet</label>
-            {{ form.feet(class="form-control") }}
+            {{ form.feet(class="form-control", value=height_parts[0] if not is_new else '') }}
         </div>
         <div class="col-sm-6">
             <label for="{{ form.inches.id }}">Inches</label>
-            {{ form.inches(class="form-control") }}
+            {{ form.inches(class="form-control", value=height_parts[1] if not is_new else '') }}
         </div>
     </div>
     <div class="form-group">
         <label for="{{ form.weight.id }}">Weight (lbs)</label>
-        {{ form.weight(class="form-control") }}
+        {{ form.weight(class="form-control", value=fighter.weight if not is_new else '') }}
     </div>
     <div class="form-group">
         <label for="{{ form.country.id }}">Country</label>
-        {{ form.country(class="form-control") }}
+        {{ form.country(class="form-control")}}
     </div>
+    {% if not is_new %}
+    <script>
+        var countrySelect = document.getElementById("{{ form.country.id }}");
+        var defaultCountry = "{{ fighter.country_name }}";
+        for (var i = 0; i < countrySelect.options.length; i++) {
+            if (countrySelect.options[i].text === defaultCountry) {
+                countrySelect.options[i].selected = true;
+                break;
+            }
+        }
+    </script>
+    {% endif %}
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+{% if not is_new %}
+<div class="text-center">
+    <p>Remove fighter from database:</p>
+    <a href="{{ url_for('delete_fighter', fighter_id=fighter.id) }}" class="btn btn-danger">Delete</a>
+</div>
+{% endif %}
 {% endblock %}

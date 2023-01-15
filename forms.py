@@ -26,7 +26,7 @@ class FighterForm(FlaskForm):
     firstname = StringField("First Name", validators=[DataRequired()])
     lastname = StringField("Last Name", validators=[DataRequired()])
     nickname = StringField("Nickname")
-    born = DateField("Born", format="%Y-%m-%d")
+    born = DateField("Born", validators=[DataRequired()], format="%Y-%m-%d")
     feet = IntegerField("Feet", validators=[validators.Optional(), NumberRange(min=4, max=7)])
     inches = IntegerField("Inches", validators=[validators.Optional(), NumberRange(min=0, max=11)])
     weight = IntegerField("Weight (lbs)", validators=[validators.Optional(), NumberRange(min=100, max=500)])

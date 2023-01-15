@@ -1,42 +1,61 @@
 {% extends "layout.html" %}
-{% block title %} {{ fighter.firstname }} {{ fighter.lastname }} {% endblock %}
+{% block title %} {{ fighter.firstname }} {% if fighter.nickname %}"{{ fighter.nickname }}"{% endif %} {{
+fighter.lastname }} {% endblock %}
 
 {% block content %}
-<h2>{{ fighter.firstname }} {{ fighter.lastname }}</h2>
-<p>Nickname: {{ fighter.nickname }}</p>
-<p>Country: {{ fighter.country }}</p>
-<p>Born: {{ fighter.born }}</p>
-<p>Height: {{ fighter.height }} ft. in.</p>
-<p>Weight: {{ fighter.weight }} lbs</p>
-<h3>Fights</h3>
-<table>
-    <tr>
-        <th>Opponent</th>
-        <th>Result</th>
-        <th>Winning Method</th>
-        <th>Date</th>
-    </tr>
-    {% for fight in fights %}
-    <tr>
-        <td>
-            {% if fighter.id == fight.fighter1 %}
-            {{ fight.f2_firstname }} {{ fight.f2_lastname }}
-            {% else %}
-            {{ fight.f1_firstname }} {{ fight.f1_lastname }}
+<div class="card">
+    <div class="card-body">
+        <h2 class="card-title text-center">{{ fighter.firstname }} {% if fighter.nickname %}"{{ fighter.nickname }}"{% endif %} {{
+            fighter.lastname }}</h2>
+        <p class="card-text">Country: {{ fighter.country }}</p>
+        <p class="card-text">Born: {{ fighter.born }}</p>
+        {% set float_string = fighter.height|string %}
+        {% set height_parts = float_string.split('.') %}
+        <p class="card-text">Height: {{ height_parts[0] }}'{{ height_parts[1] }}''</p>
+        <p class="card-text">Weight: {{ fighter.weight }} lbs</p>
+        <h3 class="card-subtitle mb-2 text-muted">Fights</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Opponent</th>
+                    <th>Result</th>
+                    <th>Winning Method</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fight in fights %}
+                <tr>
+                    <td>
+                        {% if fighter.id == fight.fighter1 %}
+                        <a href="{{ url_for('fighter_profile', fighter_id=fight.fighter2) }}">{{ fight.f2_firstname }}
+                            {{ fight.f2_lastname }}</a>
+                        {% else %}
+                        <a href="{{ url_for('fighter_profile', fighter_id=fight.fighter1) }}">{{ fight.f1_firstname }}
+                            {{ fight.f1_lastname }}</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if fight.winner == fighter.id %}
+                        Win
+                        {% elif fight.draw %}
+                        Draw
+                        {% else %}
+                        Loss
+                        {% endif %}
+                    </td>
+                    <td>{{ fight.winning_method }}</td>
+                    <td>{{ fight.date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="text-right edit-btn">
+            {% if is_admin %}
+                <a href="{{ url_for('edit_fighter', fighter_id=fighter.id) }}" class="btn btn-primary">Edit</a>
             {% endif %}
-        </td>
-        <td>
-            {% if fight.winner == fighter.id %}
-            Win
-            {% elif fight.draw %}
-            Draw
-            {% else %}
-            Loss
-            {% endif %}
-        </td>
-        <td>{{ fight.winning_method }}</td>
-        <td>{{ fight.date }}</td>
-    </tr>
-    {% endfor %}
-</table>
+        </div>        
+    </div>
+</div>
+
 {% endblock %}

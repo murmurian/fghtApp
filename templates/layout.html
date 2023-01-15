@@ -58,14 +58,10 @@
       </div>
     {% endfor %}
     <div class="row">
-        <div class="col-8">
+        <div class="col-1"></div>
+        <div class="col-10">
             {% block content %}{% endblock %}
         </div>
-        <div class="col-4">
-            <h2>Info</h2>
-            {% for message in get_flashed_messages() %}
-            <div class="flash-message">{{ message }}</div>
-            {% endfor %}
-        </div>
+        <div class="col-1"></div>
     </div>
 </div>

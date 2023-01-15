@@ -1,4 +1,4 @@
-from datetime import time, timedelta
+from datetime import time
 from db import db
 
 
@@ -8,7 +8,7 @@ def get_countries():
     return result.fetchall()
 
 
-def get_fights(fighter_id):
+def fights_by_id(fighter_id):
     sql = """SELECT f.*,
         f1.firstname AS f1_firstname, f1.lastname AS f1_lastname, f1.nickname AS f1_nickname,
         f2.firstname AS f2_firstname, f2.lastname AS f2_lastname, f2.nickname AS f2_nickname,
@@ -70,6 +70,22 @@ def add_fight(form):
                        "rounds": rounds, "ending_time": ending_time, "winner": winner, "draw":draw, "method": method, "date": date, "event": event, "fight_order": fight_order, "weight_class": weight_class})
     db.session.commit()
     return True
+
+
+def get_fight(fight_id):
+    sql = """SELECT f.*,
+        f1.firstname AS f1_firstname, f1.lastname AS f1_lastname, f1.nickname AS f1_nickname,
+        f2.firstname AS f2_firstname, f2.lastname AS f2_lastname, f2.nickname AS f2_nickname,
+        r.firstname AS r_firstname, r.lastname AS r_lastname, e.name AS event_name
+        FROM fights f
+        LEFT JOIN fighters f1 ON f.fighter1 = f1.id
+        LEFT JOIN fighters f2 ON f.fighter2 = f2.id
+        LEFT JOIN referees r ON f.referee = r.id
+        LEFT JOIN events e ON f.event = e.id
+        WHERE f.id = :fight_id"""
+    result = db.session.execute(sql, {"fight_id": fight_id}).fetchone()
+    return result
+
 
 def get_events():
     result = db.session.execute(
