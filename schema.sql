@@ -35,7 +35,7 @@ CREATE TABLE fights (
   referee INTEGER REFERENCES referees(id) DEFAULT 1 NOT NULL ON DELETE CASCADE,
   rounds SMALLINT DEFAULT 3 NOT NULL,
   ending_time TIME,  
-  winner INTEGER REFERENCES fighters(id),
+  winner INTEGER REFERENCES fighters(id) ON DELETE CASCADE,
   draw BOOLEAN DEFAULT FALSE,
   winning_method TEXT,
   date DATE NOT NULL,

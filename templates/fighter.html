@@ -7,7 +7,7 @@ fighter.lastname }} {% endblock %}
     <div class="card-body">
         <h2 class="card-title text-center">{{ fighter.firstname }} {% if fighter.nickname %}"{{ fighter.nickname }}"{% endif %} {{
             fighter.lastname }}</h2>
-        <p class="card-text">Country: {{ fighter.country }}</p>
+        <p class="card-text">Country: {{ fighter.country_name }}</p>
         <p class="card-text">Born: {{ fighter.born }}</p>
         {% set float_string = fighter.height|string %}
         {% set height_parts = float_string.split('.') %}
@@ -35,15 +35,7 @@ fighter.lastname }} {% endblock %}
                             {{ fight.f1_lastname }}</a>
                         {% endif %}
                     </td>
-                    <td>
-                        {% if fight.winner == fighter.id %}
-                        Win
-                        {% elif fight.draw %}
-                        Draw
-                        {% else %}
-                        Loss
-                        {% endif %}
-                    </td>
+                    <td>{% if fight.winner == fighter.id %}Win{% elif fight.draw %}Draw{% else %}Loss{% endif %}</td>
                     <td>{{ fight.winning_method }}</td>
                     <td>{{ fight.date }}</td>
                 </tr>
@@ -51,9 +43,7 @@ fighter.lastname }} {% endblock %}
             </tbody>
         </table>
         <div class="text-right edit-btn">
-            {% if is_admin %}
-                <a href="{{ url_for('edit_fighter', fighter_id=fighter.id) }}" class="btn btn-primary">Edit</a>
-            {% endif %}
+            {% if is_admin %}<a href="{{ url_for('edit_fighter', fighter_id=fighter.id) }}" class="btn btn-primary">Edit</a>{% endif %}
         </div>        
     </div>
 </div>

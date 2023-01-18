@@ -58,6 +58,32 @@ class FightForm(FlaskForm):
         if winner.data not in [self.fighter1.data, self.fighter2.data, -1]:
             raise ValidationError("Winner must be one of the fighters or a draw")
 
+
+class EditFightForm(FlaskForm):
+    fighter1 = StringField("Fighter 1", validators=[DataRequired()])
+    fighter2 = StringField("Fighter 2", validators=[DataRequired()])
+    referee = StringField("Referee", validators=[DataRequired()])
+    rounds = IntegerField("Rounds", validators=[DataRequired(), NumberRange(min=1, max=5)])
+    ending_round = IntegerField("Ending Round", validators=[DataRequired(), NumberRange(min=1, max=5)])
+    minutes = IntegerField("Minutes", validators=[validators.Optional(), NumberRange(min=0, max=5)])
+    seconds = IntegerField("Seconds", validators=[validators.Optional(), NumberRange(min=0, max=59)])
+    winner = StringField("Winner", validators=[DataRequired()])
+    winning_method = StringField("Winning Method")
+    date = DateField("Date", validators=[DataRequired()], format="%Y-%m-%d")
+    event = StringField("Event")
+    fight_order = IntegerField("Fight Order")
+    weight_class = IntegerField("Weight class (lbs)")
+    submit = SubmitField("Submit")
+    
+    def validate_fighter1(self, fighter1):
+        if self.fighter1.data == self.fighter2.data:
+            raise ValidationError("Fighter 1 and Fighter 2 must be different")
+    
+    def validate_winner(self, winner):
+        if winner.data not in [self.fighter1.data, self.fighter2.data, -1]:
+            raise ValidationError("Winner must be one of the fighters or a draw")
+
+
 class OfficialsForm(FlaskForm):
     firstname = StringField("First Name", validators=[DataRequired(), validators.Length(min=2, max=30)])
     lastname = StringField("Last Name", validators=[DataRequired(), validators.Length(min=2, max=30)])

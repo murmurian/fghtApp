@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-  <h1>Add Referee</h1>
+  <h1 class="text-center my-3">Add Referee</h1>
   <form method="POST" action="{{ url_for('add_referee') }}">
     {{ form.hidden_tag() }}
     <div class="form-group">

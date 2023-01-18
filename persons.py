@@ -63,6 +63,12 @@ def delete_fighter(id):
     db.session.commit()
 
 
+def get_fighter_id(firstname, lastname, born):
+    sql = "SELECT id FROM fighters WHERE firstname = :firstname AND lastname = :lastname AND born = :born"
+    result = db.session.execute(sql, {"firstname": firstname, "lastname": lastname, "born": born}).fetchone()
+    return result[0]
+
+
 def add_referee(form):
     firstname = form.firstname.data
     lastname = form.lastname.data

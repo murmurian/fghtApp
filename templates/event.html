@@ -1,39 +1,58 @@
 {% extends "layout.html" %}
+{% block title %} {{ event.name }} {% endblock %}
 
 {% block content %}
-    <h1>{{ event.name }}</h1>
-    <p>Date: {{ event.date }}</p>
-    <p>Location: {{ event.location }}</p>
-    <p>Promotion: {{ event.promotion }}</p>
-    <h2>Fights</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Fight Order</th>
-                <th>Fighter 1</th>
-                <th>Fighter 2</th>
-                <th>Referee</th>
-                <th>Rounds</th>
-                <th>Ending Time</th>
-                <th>Winner</th>
-                <th>Winning Method</th>
-                <th>Weight Class</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for fight in fights %}
-                <tr>
-                    <td>{{ fight.fight_order }}</td>
-                    <td>{{ fight.fighter1.firstname }} {{ fight.fighter1.lastname }}</td>
-                    <td>{{ fight.fighter2.firstname }} {{ fight.fighter2.lastname }}</td>
-                    <td>{{ fight.referee.firstname }} {{ fight.referee.lastname }}</td>
-                    <td>{{ fight.rounds }}</td>
-                    <td>{{ fight.ending_time }}</td>
-                    <td>{{ fight.winner.firstname }} {{ fight.winner.lastname }}</td>
-                    <td>{{ fight.winning_method }}</td>
-                    <td>{{ fight.weight_class }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="card">
+    <div class="card-body">
+        <h2 class="card-title text-center">{{ event.name }}</h2>
+        <p class="card-text">Date: {{ event.date }}</p>
+        <p class="card-text">Location: {{ event.location }}</p>
+        <p class="card-text">Promotion: {{ event.promotion }}</p>
+        <h3 class="text-center my-3">Fights</h3>
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Fight</th>
+                <th scope="col">Method</th>
+                <th scope="col">Final round</th>
+                <th scope="col">Time</th>
+                <th scope="col">Referee</th>
+                <th scope="col">Weight class</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for fight in fights %}
+              <tr>
+                <td>{{ fight.fight_order }}</td>
+                <td>
+                  <a href="{{ url_for('fight_detail', fight_id = fight.id) }}">
+                    {% if fight.fighter1 == fight.winner %}
+                    {{ fight.f1_firstname }} {{ fight.f1_lastname }}
+                    {% else %}
+                    {{ fight.f2_firstname }} {{ fight.f2_lastname }}
+                    {% endif %}
+                    {% if fight.draw %}
+                    -
+                    {% else %}
+                    def
+                    {% endif %}
+                    {% if fight.fighter1 == fight.winner %}
+                    {{ fight.f2_firstname }} {{ fight.f2_lastname }}
+                    {% else %}
+                    {{ fight.f1_firstname }} {{ fight.f1_lastname }}
+                    {% endif %}
+                  </a>
+                </td>
+                <td>{{ fight.winning_method }}</td>
+                <td>{{ final_rounds[loop.index0] }}</td>
+                <td>{{ ending_times[loop.index0] }}</td>
+                <td>{{ fight.referee }}</td>
+                <td>{{ fight.weight_class }}</td>
+              </tr>
+              {% endfor %}          
+            </tbody>
+          </table>
+    </div>
+</div>
 {% endblock %}
