@@ -1,7 +1,7 @@
 from app import app
 from db import db
 from flask import flash, redirect, render_template, request, session
-from forms import EditFightForm, FighterForm, OfficialsForm, RegistrationForm, SearchForm, FightForm, LoginForm
+from forms import FighterForm, OfficialsForm, RegistrationForm, SearchForm, FightForm, LoginForm
 import users
 import persons
 import matches
@@ -145,7 +145,7 @@ def add_fight():
     form = FightForm()
     form.fighter1.choices= [(fighter.id, fighter.lastname + ", " + fighter.firstname) for fighter in persons.get_fighters()]
     form.fighter2.choices= [(fighter.id, fighter.lastname + ", " + fighter.firstname) for fighter in persons.get_fighters()]
-    form.winner.choices = [(-1, "Draw")] + [(fighter.id, fighter.firstname + " " + fighter.lastname) for fighter in persons.get_fighters()]
+    form.winner.choices = [(-1, "Draw")] + [(fighter.id, fighter.lastname + ", " + fighter.firstname) for fighter in persons.get_fighters()]
     form.referee.choices= [(referee.id, referee.lastname + ", " + referee.firstname) for referee in persons.get_referees()]
     form.event.choices = [(-1, "N/A")] + [(event.id, event.name) for event in matches.get_events()]
     form.weight_class.choices = persons.get_weight_classes()
@@ -166,17 +166,18 @@ def edit_fight(fight_id):
     form = FightForm()
     form.fighter1.choices= [(fighter.id, fighter.lastname + ", " + fighter.firstname) for fighter in persons.get_fighters()]
     form.fighter2.choices= [(fighter.id, fighter.lastname + ", " + fighter.firstname) for fighter in persons.get_fighters()]
-    form.winner.choices = [(-1, "Draw")] + [(fighter.id, fighter.firstname + " " + fighter.lastname) for fighter in persons.get_fighters()]
+    form.winner.choices = [(-1, "Draw")] + [(fighter.id, fighter.lastname + ", " + fighter.firstname) for fighter in persons.get_fighters()]
     form.referee.choices= [(referee.id, referee.lastname + ", " + referee.firstname) for referee in persons.get_referees()]
     form.event.choices = [(-1, "N/A")] + [(event.id, event.name) for event in matches.get_events()]
     form.weight_class.choices = persons.get_weight_classes()
-    final_round = matches.final_round(fight.ending_time.strftime("%H:%M:%S"))
-    ending_time = matches.ending_time(final_round, fight.ending_time.strftime("%H:%M:%S"))
+    final_round = matches.final_round(fight.ending_time.strftime("%M:%S"))
+    ending_time = matches.ending_time(final_round, fight.ending_time.strftime("%M:%S"))
     minutes = ending_time.strftime("%M")
     seconds = ending_time.strftime("%S")
     if request.method == "POST" and form.validate_on_submit():
         matches.edit_fight(form, fight_id)
         flash("Fight info updated")
+        return redirect("/fights/edit/" + str(fight_id) )
     return render_template("add_fight.html", form=form, is_new=False, fight=fight, final_round=final_round, minutes=minutes, seconds=seconds)
 
 
@@ -195,8 +196,8 @@ def fight_detail(fight_id):
     fight = matches.get_fight(fight_id)
     is_admin = users.is_admin(session.get("user_id"))
     if fight:
-        final_round = matches.final_round(fight.ending_time.strftime("%H:%M:%S"))
-        ending_time = matches.ending_time(final_round, fight.ending_time.strftime("%H:%M:%S"))
+        final_round = matches.final_round(fight.ending_time.strftime("%M:%S"))
+        ending_time = matches.ending_time(final_round, fight.ending_time.strftime("%M:%S"))
         return render_template("fight.html", fight =fight, is_admin=is_admin, final_round=final_round, ending_time=ending_time)
     else:
         flash("Fight not found")
@@ -220,7 +221,7 @@ def add_referee():
 @app.route("/referees")
 def referees_route():
     referees = persons.get_referees()
-    return render_template("referees.html", count =len(referees), referees=referees)
+    return render_template("referees.html", count=len(referees), referees=referees)
 
 
 @app.route("/referees/<int:referee_id>")
@@ -228,7 +229,7 @@ def referee_profile(referee_id):
     referee = persons.get_referee(referee_id)
     fights = matches.fights_by_referee(referee_id)
     if referee:
-        return render_template("referee.html", referee =referee, fights=fights)
+        return render_template("referee.html", referee=referee, fights=fights)
     else:
         flash("Referee not found")
         return redirect("/referees")
@@ -237,7 +238,7 @@ def referee_profile(referee_id):
 @app.route("/events", methods=["GET", "POST"])
 def events_route():
     events = matches.get_events()
-    return render_template("events.html", count =len(events), events=events)
+    return render_template("events.html", count=len(events), events=events)
 
 
 @app.route("/events/<int:event_id>")

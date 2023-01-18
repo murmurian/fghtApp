@@ -114,10 +114,12 @@ def get_fight(fight_id):
     sql = """SELECT f.*,
         f1.firstname AS f1_firstname, f1.lastname AS f1_lastname, f1.nickname AS f1_nickname,
         f2.firstname AS f2_firstname, f2.lastname AS f2_lastname, f2.nickname AS f2_nickname,
+        w.firstname AS w_firstname, w.lastname AS w_lastname,
         r.firstname AS r_firstname, r.lastname AS r_lastname, e.name AS event_name
         FROM fights f
         LEFT JOIN fighters f1 ON f.fighter1 = f1.id
         LEFT JOIN fighters f2 ON f.fighter2 = f2.id
+        LEFT JOIN fighters w ON f.winner = w.id
         LEFT JOIN referees r ON f.referee = r.id
         LEFT JOIN events e ON f.event = e.id
         WHERE f.id = :fight_id"""
@@ -152,21 +154,14 @@ def calculate_ending_time(form):
 
 
 def final_round(ending_time):
-    minutes = int(ending_time[3:5])
-    if minutes == 25:
-        return 5
-    if minutes == 15:
-        return 3
+    minutes = int(ending_time[0:2])
+    if minutes % 5 == 0:
+        return minutes // 5
     return minutes // 5 + 1
 
 
 def ending_time(final_round, ending_time):
-    minutes = int(ending_time[3:5])
-    seconds = int(ending_time[6:8])
-    if final_round == 5:
-        minutes = 25
-    elif final_round == 3:
-        minutes = 15
-    else:
-        minutes = minutes - ((final_round - 1) * 5)
+    minutes = int(ending_time[0:2])
+    seconds = int(ending_time[3:5])
+    minutes = minutes - ((final_round - 1) * 5)
     return time(hour=0, minute=minutes, second=seconds)

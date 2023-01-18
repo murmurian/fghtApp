@@ -35,23 +35,19 @@
                 break;
             }
         }
-    </script>
-    <script>
-        var f1Select = document.getElementById("{{ form.fighter2.id }}");
-        var defaultf1 = "{{ fight.f2_lastname }}" + ", " + "{{ fight.f2_firstname }}";
+        var f2Select = document.getElementById("{{ form.fighter2.id }}");
+        var defaultf2 = "{{ fight.f2_lastname }}" + ", " + "{{ fight.f2_firstname }}";
         for (var i = 0; i < f1Select.options.length; i++) {
-            if (f1Select.options[i].text === defaultf1) {
-                f1Select.options[i].selected = true;
+            if (f2Select.options[i].text === defaultf2) {
+                f2Select.options[i].selected = true;
                 break;
             }
         }
-    </script>
-    <script>
-        var f1Select = document.getElementById("{{ form.referee.id }}");
-        var defaultf1 = "{{ fight.r_lastname }}" + ", " + "{{ fight.r_firstname }}";
-        for (var i = 0; i < f1Select.options.length; i++) {
-            if (f1Select.options[i].text === defaultf1) {
-                f1Select.options[i].selected = true;
+        var rSelect = document.getElementById("{{ form.referee.id }}");
+        var defaultr = "{{ fight.r_lastname }}" + ", " + "{{ fight.r_firstname }}";
+        for (var i = 0; i < rSelect.options.length; i++) {
+            if (rSelect.options[i].text === defaultr) {
+                rSelect.options[i].selected = true;
                 break;
             }
         }
@@ -60,7 +56,11 @@
     <div class="form-group row">
         <div class="col-sm-4">
             <label for="{{ form.winner.id }}">Winner</label>
-            {{ form.winner(class="form-control") }}
+            {% if not is_new and fight.draw %} {{ form.winner(class="form-control") }}
+            {% else %}
+            {{ form.winner(class="form-control", value=fight.w_firstname + " " + fight.w_lastname if not is_new else
+            '') }}
+            {% endif %}
         </div>
         <div class="col-sm-4">
             <label for="winning_method">Winning Method</label>
@@ -75,6 +75,26 @@
             </select>
         </div>
     </div>
+    {% if not is_new %}
+    <script>
+        var wSelect = document.getElementById("{{ form.winner.id }}");
+        var defaultf1 = "{{ fight.w_lastname }}" + ", " + "{{ fight.w_firstname }}";
+        for (var i = 0; i < wSelect.options.length; i++) {
+            if (wSelect.options[i].text === defaultf1) {
+                wSelect.options[i].selected = true;
+                break;
+            }
+        }
+        var divSelect = document.getElementById("weight_class");
+        var defaultValue = "{{ fight.weight_class }}";
+        for (var i = 0; i < divSelect.options.length; i++) {
+            if (divSelect.options[i].value === defaultValue) {
+                divSelect.options[i].selected = true;
+                break;
+            }
+        }
+    </script>
+    {% endif %}
     <div class="form-group row">
         <div class="col-md-3">
             <label for="rounds">Rounds</label>
@@ -124,16 +144,17 @@
 {% if not is_new %}
 <div class="text-center">
     <p>Remove fighter from database:</p>
-    <a href="{{ url_for('delete_fight', fight_id=fight.id) }}" class="btn btn-danger" onclick="return confirmPress()">Delete</a>
+    <a href="{{ url_for('delete_fight', fight_id=fight.id) }}" class="btn btn-danger"
+        onclick="return confirmPress()">Delete</a>
 </div>
 <script>
-function confirmPress() {
-    if (confirm("Are you sure you want to delete this fighter from the database?")) {
-        return true;
-    } else {
-        return false;
+    function confirmPress() {
+        if (confirm("Are you sure you want to delete this fighter from the database?")) {
+            return true;
+        } else {
+            return false;
+        }
     }
-}
 </script>
 {% endif %}
 {% endblock %}

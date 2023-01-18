@@ -84,9 +84,14 @@ def add_referee(form):
     return True
 
 
+def get_referees():
+    result = db.session.execute("SELECT * FROM referees")
+    return result.fetchall()
+
+
 def get_weight_classes():
     weight_classes = [(115, "Strawweight"), (125, "Flyweight"), (135, "Bantamweight"), (145, "Featherweight"), (155, "Lightweight"), (170, "Welterweight"), (185, "Middleweight"), (205, "Light Heavyweight"), (265, "Heavyweight"), (115, "Women's Strawweight"), (125, "Women's Flyweight"),
-                      (135, "Women's Bantamweight"), (145, "Women's Featherweight"), (155, "Women's Lightweight"), (0, "Catchweight"), (500, "Open Weight")]
+                      (135, "Women's Bantamweight"), (145, "Women's Featherweight"), (155, "Women's Lightweight"), (100, "Catchweight"), (500, "Open Weight")]
     return weight_classes
 
 

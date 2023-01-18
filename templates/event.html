@@ -46,9 +46,9 @@
                 </td>
                 <td>{{ fight.winning_method }}</td>
                 <td>{{ final_rounds[loop.index0] }}</td>
-                <td>{{ ending_times[loop.index0] }}</td>
+                <td>{{ ending_times[loop.index0].strftime("%M:%S") }}</td>
                 <td>{{ fight.referee }}</td>
-                <td>{{ fight.weight_class }}</td>
+                <td>{{ fight.weight_class }} lbs</td>
               </tr>
               {% endfor %}          
             </tbody>

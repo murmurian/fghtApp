@@ -46,7 +46,7 @@
                         <td>{{ fight.weight_class }} lbs</td>
                         <td>{{ fight.winning_method }}</td>
                         <td>{{ final_round }}</td>
-                        <td>{{ ending_time }}</td>
+                        <td>{{ ending_time.strftime("%M:%S") }}</td>
                     </tr>
                 </tbody>
             </table>
