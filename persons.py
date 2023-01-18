@@ -69,6 +69,12 @@ def get_fighter_id(firstname, lastname, born):
     return result[0]
 
 
+def get_referee(id):
+    sql = "SELECT * FROM referees WHERE id = :id"
+    result = db.session.execute(sql, {"id": id}).fetchone()
+    return result
+
+
 def add_referee(form):
     firstname = form.firstname.data
     lastname = form.lastname.data
@@ -84,8 +90,23 @@ def add_referee(form):
     return True
 
 
+def edit_referee(form, referee_id):
+    firstname = form.firstname.data
+    lastname = form.lastname.data
+
+    sql = "UPDATE referees SET firstname = :firstname, lastname = :lastname WHERE id = :id"
+    db.session.execute(sql, {"firstname": firstname, "lastname": lastname, "id": referee_id})
+    db.session.commit()
+
+
+def delete_referee(id):
+    sql = "DELETE FROM referees WHERE id = :id"
+    db.session.execute(sql, {"id": id})
+    db.session.commit()
+
+
 def get_referees():
-    result = db.session.execute("SELECT * FROM referees")
+    result = db.session.execute("SELECT * FROM referees WHERE id > 1 Order BY lastname")
     return result.fetchall()
 
 

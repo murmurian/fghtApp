@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block title %} {{ referee.firstname }} {{ referee.lastname }} {% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h2 class="card-title text-center">{{ referee.firstname }} {{ referee.lastname }}</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Fight</th>
+                    <th scope="col">Event</th>
+                    <th scope="col">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fight in fights %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('fight_detail', fight_id = fight.id) }}">
+                            {% if fight.fighter1 == fight.winner %}
+                            {{ fight.f1_firstname }} {{ fight.f1_lastname }}
+                            {% else %}
+                            {{ fight.f2_firstname }} {{ fight.f2_lastname }}
+                            {% endif %}
+                            {% if fight.draw %}
+                            -
+                            {% else %}
+                            def
+                            {% endif %}
+                            {% if fight.fighter1 == fight.winner %}
+                            {{ fight.f2_firstname }} {{ fight.f2_lastname }}
+                            {% else %}
+                            {{ fight.f1_firstname }} {{ fight.f1_lastname }}
+                            {% endif %}
+                        </a>
+                    </td>
+                    <td>
+                        {% if fight.event != None %}
+                        <a href="{{ url_for('event_detail', event_id=fight.event) }}">{{ fight.event_name }}</a>
+                        {% else %}
+                        N/A
+                        {% endif %}
+                    </td>
+                    <td>{{ fight.date }}</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+        <div class="text-right edit-btn">
+            {% if is_admin %}<a href="{{ url_for('edit_referee', referee_id=referee.id) }}" class="btn btn-primary">Edit</a>{% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

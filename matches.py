@@ -8,7 +8,7 @@ def get_countries():
     return result.fetchall()
 
 
-def fights_by_id(fighter_id):
+def fights_by_id(role, id):
     sql = """SELECT f.*,
         f1.firstname AS f1_firstname, f1.lastname AS f1_lastname, f1.nickname AS f1_nickname,
         f2.firstname AS f2_firstname, f2.lastname AS f2_lastname, f2.nickname AS f2_nickname,
@@ -17,10 +17,13 @@ def fights_by_id(fighter_id):
         LEFT JOIN fighters f1 ON f.fighter1 = f1.id
         LEFT JOIN fighters f2 ON f.fighter2 = f2.id
         LEFT JOIN referees r ON f.referee = r.id
-        LEFT JOIN events e ON f.event = e.id
-        WHERE f.fighter1 = :fighter_id OR f.fighter2 = :fighter_id
-        ORDER BY f.date"""
-    result = db.session.execute(sql, {"fighter_id": fighter_id})
+        LEFT JOIN events e ON f.event = e.id"""
+    if role == "referee":
+        sql += " WHERE f.referee = :id"
+    if role == "fighter":
+        sql += " WHERE f.fighter1 = :id OR f.fighter2 = :id"
+    sql += " ORDER BY f.date"
+    result = db.session.execute(sql, {"id": id})
     return result.fetchall()
 
 
