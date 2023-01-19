@@ -55,6 +55,9 @@
         {% endfor %}
       </tbody>
     </table>
+    <div class="text-right edit-btn">
+      {% if is_admin %}<a href="{{ url_for('edit_event', event_id=event.id) }}" class="btn btn-primary">Edit</a>{% endif %}
+  </div>
   </div>
 </div>
 {% endblock %}

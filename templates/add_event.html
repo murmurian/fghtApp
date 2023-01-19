@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block title %}
+{% if is_new %}Add new event{% else %}Edit event{% endif %}
+{% endblock %}
+{% block content %}
+<h1 class="text-center my-3">{% if is_new %}Add a new{% else %}Edit{% endif %} event</h1>
+<form method="POST" action="{% if is_new %}{{ url_for('add_event') }}{% else %}{{ url_for('edit_event', event_id=event.id) }}{% endif %}">
+    {{ form.hidden_tag() }}
+    <div class="form-group row">
+        <div class="col-sm-4">
+            <label for="{{ form.name.id }}">Event name</label>
+            {{ form.name(class="form-control", value=event.name if not is_new else '') }}
+        </div>
+        <div class="col-sm-4">
+            <label for="{{ form.location.id }}">Location</label>
+            {{ form.location(class="form-control", value=event.location if not is_new else '') }}
+        </div>
+        <div class="col-sm-2">
+            <label for="{{ form.promotion.id }}">Promotion</label>
+            {{ form.promotion(class="form-control", value=event.promotion if not is_new else '') }}
+        </div>
+        <div class="col-sm-2">
+            <label for="{{ form.date.id }}">Date</label>
+            {{ form.date(class="form-control", value=event.date if not is_new else '') }}
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% if not is_new %}
+<div class="text-center">
+    <p>Remove event from database:</p>
+    <a href="{{ url_for('delete_event', event_id=event.id) }}" class="btn btn-danger" onclick="return confirmPress()">Delete</a>
+</div>
+<script>
+function confirmPress() {
+    if (confirm("Are you sure you want to delete this event from the database?")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+</script>
+{% endif %}
+{% endblock %}

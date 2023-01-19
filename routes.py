@@ -1,7 +1,7 @@
 from app import app
 from db import db
 from flask import flash, redirect, render_template, request, session
-from forms import FighterForm, OfficialsForm, RegistrationForm, SearchForm, FightForm, LoginForm
+from forms import EventForm, FighterForm, OfficialsForm, RegistrationForm, SearchForm, FightForm, LoginForm, ScoreForm
 import users
 import persons
 import matches
@@ -208,7 +208,7 @@ def fight_detail(fight_id):
     if fight:
         final_round = matches.final_round(fight.ending_time.strftime("%M:%S"))
         ending_time = matches.ending_time(final_round, fight.ending_time.strftime("%M:%S"))
-        return render_template("fight.html", fight =fight, is_admin=users.authorize(), final_round=final_round, ending_time=ending_time)
+        return render_template("fight.html", fight =fight, is_admin=users.authorize(), final_round=final_round, ending_time=ending_time, is_user=session.get("user_id"))
     else:
         flash("Fight not found")
         return redirect("/fights")
@@ -288,7 +288,72 @@ def event_detail(event_id):
     final_rounds = [matches.final_round(fight.ending_time.strftime("%M:%S")) for fight in fights]
     ending_times = [matches.ending_time(final_round, fight.ending_time.strftime("%M:%S")) for final_round, fight in zip(final_rounds, fights)]
     if event:
-        return render_template("event.html", event =event, fights=fights, final_rounds=final_rounds, ending_times=ending_times)
+        return render_template("event.html", event =event, fights=fights, final_rounds=final_rounds, ending_times=ending_times, is_admin=users.authorize())
     else:
         flash("Event not found")
         return redirect("/events")
+
+
+@app.route("/events/new", methods=["GET", "POST"])
+def add_event():
+    if not users.authorize():
+        flash("You are not authorized to add events")
+        return redirect("/events")
+    form = EventForm()
+    if request.method == "POST" and form.validate_on_submit():
+        if matches.add_event(form):
+            flash("Event added successfully")
+        else:
+            flash("Event already exists")
+    return render_template("add_event.html", form=form, is_new=True)
+
+
+@app.route("/events/edit/<int:event_id>", methods=["GET", "POST"])
+def edit_event(event_id):
+    if not users.authorize():
+        flash("You are not authorized to edit events")
+        return redirect("/events/" + str(event_id))
+    event = matches.get_event(event_id)
+    if not event:
+        flash("Event not found")
+        return redirect("/events")
+    form = EventForm()
+    if request.method == "POST" and form.validate_on_submit():
+        matches.edit_event(form, event_id)
+        flash("Event info updated")
+        return redirect("/events/edit/" + str(event_id) )
+    return render_template("add_event.html", form=form, event=event)
+
+
+@app.route("/events/delete/<int:event_id>", methods=["GET", "POST"])
+def delete_event(event_id):
+    if not users.authorize():
+        flash("You are not authorized to delete events")
+        return redirect("/events/" + str(event_id))
+    if not matches.get_event(event_id):
+        flash("Event not found")
+        return redirect("/events")
+    if request.method == "POST":
+        matches.delete_event(event_id)
+        flash("Event deleted")
+    return redirect("/events")
+
+
+@app.route("/fights/<int:fight_id>/<int:id>")
+def add_score(fight_id, id):
+    if not session.get("user_id"):
+        flash("You must register or login to add scores")
+        return redirect("/fights/" + str(fight_id))
+    if not session.get("user_id") == id:
+        flash("Action not authorized")
+        return redirect("/fights/" + str(fight_id))
+    fight = matches.get_fight(fight_id)
+    if not fight:
+        flash("Fight not found")
+        return redirect("/fights")
+    form = ScoreForm()
+    if request.method == "POST" and form.validate_on_submit():
+        match.score_fight(form, fight_id, id)
+        flash("Score added successfully")
+        return redirect("/fights/" + str(fight_id))
+    return render_template("add_score.html", form=form, fight=fight, id=id, is_new=True, is_user=session.get("user_id"))

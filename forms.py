@@ -66,8 +66,22 @@ class OfficialsForm(FlaskForm):
 
 
 class EventForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired(), validators.Length(min=2, max=30)])
+    name = StringField("Name", validators=[DataRequired(), validators.Length(min=2, max=50)])
     date = DateField("Date", validators=[DataRequired()], format="%Y-%m-%d")
-    location = StringField("Location", validators=[DataRequired(), validators.Length(min=2, max=30)])
+    location = StringField("Location", validators=[DataRequired(), validators.Length(min=2, max=50)])
     promotion = StringField("Promotion", validators=[DataRequired(), validators.Length(min=2, max=30)])
-    submit = SubmitField("Submit")   
+    submit = SubmitField("Submit")
+
+
+class ScoreForm(FlaskForm):
+    round1_f1 = IntegerField("R1", validators=[validators.Optional(), NumberRange(min=7, max=10)])
+    round2_f1 = IntegerField("R2", validators=[validators.Optional(), NumberRange(min=7, max=10)])
+    round3_f1 = IntegerField("R3", validators=[validators.Optional(), NumberRange(min=7, max=10)])
+    round4_f1 = IntegerField("R4", validators=[validators.Optional(), NumberRange(min=7, max=10)])
+    round5_f1 = IntegerField("R5", validators=[validators.Optional(), NumberRange(min=7, max=10)])
+    round1_f2 = IntegerField("R1", validators=[validators.Optional(), NumberRange(min=7, max=10)])
+    round2_f2 = IntegerField("R2", validators=[validators.Optional(), NumberRange(min=7, max=10)])
+    round3_f2 = IntegerField("R3", validators=[validators.Optional(), NumberRange(min=7, max=10)])
+    round4_f2 = IntegerField("R4", validators=[validators.Optional(), NumberRange(min=7, max=10)])
+    round5_f2 = IntegerField("R5", validators=[validators.Optional(), NumberRange(min=7, max=10)])
+    comment = StringField("Comment", validators=[validators.Length(max=500)])

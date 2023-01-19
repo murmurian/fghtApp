@@ -142,6 +142,42 @@ def get_event(event_id):
     return result.fetchone()
 
 
+def add_event(form):
+    name = form.name.data.strip().upper()
+    date = form.date.data
+    location = form.location.data.strip()
+    promotion = form.promotion.data.strip()
+
+    sql = "SELECT * FROM events WHERE name = :name"
+    existing_event = db.session.execute(sql, {"name": name}).fetchone()
+    if existing_event:
+        return False
+
+    sql = "INSERT INTO events (name, date, location, promotion) VALUES (:name, :date, :location, :promotion)"
+    db.session.execute(sql, {"name": name, "date": date,
+                       "location": location, "promotion": promotion})
+    db.session.commit()
+    return True
+
+
+def edit_event(form, event_id):
+    name = form.name.data.strip().upper()
+    date = form.date.data
+    location = form.location.data.strip()
+    promotion = form.promotion.data.strip()
+
+    sql = "UPDATE events SET name = :name, date = :date, location = :location, promotion = :promotion WHERE id = :event_id"
+    db.session.execute(sql, {"name": name, "date": date,
+                       "location": location, "promotion": promotion, "event_id": event_id})
+    db.session.commit()
+
+
+def delete_event(event_id):
+    sql = "DELETE FROM events WHERE id = :event_id"
+    db.session.execute(sql, {"event_id": event_id})
+    db.session.commit()
+
+
 def get_fights(event_id):
     sql = "SELECT * FROM fights WHERE event = :event_id"
     result = db.session.execute(sql, {"event_id": event_id})

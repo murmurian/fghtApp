@@ -58,3 +58,20 @@ CREATE TABLE events (
 );
 
 CREATE INDEX promotion_idx ON events (promotion);
+
+CREATE TABLE scorecards (
+  id SERIAL PRIMARY KEY,
+  username INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  fight INTEGER REFERENCES fights(id) ON DELETE CASCADE,
+  round1_f1 SMALLINT,
+  round1_f2 SMALLINT,
+  round2_f1 SMALLINT,
+  round2_f2 SMALLINT,
+  round3_f1 SMALLINT,
+  round3_f2 SMALLINT,
+  round4_f1 SMALLINT,
+  round4_f2 SMALLINT,
+  round5_f1 SMALLINT,
+  round5_f2 SMALLINT,
+  comment TEXT
+);

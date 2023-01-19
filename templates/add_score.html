@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block title %}
+{% if is_new %}Add score{% else %}Edit score{% endif %}
+{% endblock %}
+{% block content %}
+<h1 class="text-center my-3">{% if is_new %}Add {% else %}Edit{% endif %} score</h1>
+<form method="POST" action="{{ url_for('add_score', fight_id=fight.id, id=is_user ) }}">
+  {{ form.hidden_tag() }}
+  <div class="form-group row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-4">
+      <label for="firstname">{{ fight.f1_firstname }} {{ fight.f1_lastname }}</label>
+    </div>
+    <div class="col-sm-4">
+      <label for="lastname">{{ fight.f2_firstname }} {{ fight.f2_lastname }}</label>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
+  <div class="form-group row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-4">
+      <label for="round1">Round 1</label>
+      {{ form.round1_f2(class="form-control") }}
+    </div>
+    <div class="col-sm-4">
+      <label for="round2">Round 1</label>
+      {{ form.round1_f2(class="form-control") }}
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% if not is_new %}
+<div class="text-center">
+    <p>Remove referee from database:</p>
+    <a href="{{ url_for('delete_referee', referee_id=referee.id) }}" class="btn btn-danger" onclick="return confirmPress()">Delete</a>
+</div>
+<script>
+function confirmPress() {
+    if (confirm("Are you sure you want to delete this referee from the database?")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+</script>
+{% endif %}
+{% endblock %}
