@@ -2,13 +2,15 @@
 
 {% block content %}
 
-<div class="card fight-card-width mx-auto">
+<div class="card fight-card-width my-3">
     <div class="card-body">
         <h2 class="card-title text-center">
             {% if fight.winner == fight.fighter1 %}
-            {{ fight.f1_firstname }} {% if fight.f1_nickname %}"{{ fight.f1_nickname }}"{% endif %} {{ fight.f1_lastname }}
+            {{ fight.f1_firstname }} {% if fight.f1_nickname %}"{{ fight.f1_nickname }}"{% endif %} {{ fight.f1_lastname
+            }}
             {% else %}
-            {{ fight.f2_firstname }} {% if fight.f2_nickname %}"{{ fight.f2_nickname }}"{% endif %} {{ fight.f2_lastname }}
+            {{ fight.f2_firstname }} {% if fight.f2_nickname %}"{{ fight.f2_nickname }}"{% endif %} {{ fight.f2_lastname
+            }}
             {% endif %}
         </h2>
         <h3 class="card-title text-center">
@@ -18,16 +20,18 @@
         </h3>
         <h2 class="card-title text-center">
             {% if fight.winner == fight.fighter1 %}
-            {{ fight.f2_firstname }} {% if fight.f2_nickname %}"{{ fight.f2_nickname }}"{% endif %} {{ fight.f2_lastname }}
+            {{ fight.f2_firstname }} {% if fight.f2_nickname %}"{{ fight.f2_nickname }}"{% endif %} {{ fight.f2_lastname
+            }}
             {% else %}
-            {{ fight.f1_firstname }} {% if fight.f1_nickname %}"{{ fight.f1_nickname }}"{% endif %} {{ fight.f1_lastname }}
+            {{ fight.f1_firstname }} {% if fight.f1_nickname %}"{{ fight.f1_nickname }}"{% endif %} {{ fight.f1_lastname
+            }}
             {% endif %}
         </h2>
         <div class="text-right edit-btn">
             {% if is_admin %}
-                <a href="{{ url_for('edit_fight', fight_id=fight.id) }}" class="btn btn-primary">Edit</a>
+            <a href="{{ url_for('edit_fight', fight_id=fight.id) }}" class="btn btn-primary">Edit</a>
             {% endif %}
-        </div>   
+        </div>
     </div>
     <div class="row">
         <div class="col-2"></div>
@@ -60,7 +64,8 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><a href="{{ url_for('referee_profile', referee_id=fight.referee) }}">{{ fight.r_firstname }} {{ fight.r_lastname }}</a></td>
+                        <td><a href="{{ url_for('referee_profile', referee_id=fight.referee) }}">{{ fight.r_firstname }}
+                                {{ fight.r_lastname }}</a></td>
                         <td>
                             {% if fight.event != None %}
                             <a href="{{ url_for('event_detail', event_id=fight.event) }}">{{ fight.event_name }}</a>
@@ -74,11 +79,46 @@
             </table>
         </div>
     </div>
-    <div class="text-center">
-        {% if is_admin or is_user %}
-            <a href="{{ url_for('add_score', fight_id=fight.id, id=is_user) }}" class="btn btn-primary">Add score</a>
+</div>
+<div class="form-group row">
+    <div class="col-sm-4"></div>
+    <div class="col-sm-4">
+        {% if userscore.score_f1 and userscore.score_f2 %}
+        <label for="User score">Your score:</label>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">{{ fight.f1_lastname }}</th>
+                    <th scope="col">{{ fight.f2_lastname }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ userscore.score_f1 }}</td>
+                    <td>{{ userscore.score_f2 }}</td>
+                </tr>
+            </tbody>
+        </table>
+        {% if userscore.comment %}
+        <div class="card text-white bg-primary my-3">
+            <div class="card-header">Comment</div>
+            <div class="card-body">
+                <p class="card-text">{{ userscore.comment }}</p>
+            </div>
+        </div>
         {% endif %}
+        {% endif %}
+        <div class="text-center">
+            {% if is_admin or is_user %}
+            {% if not userscore %}
+            <a href="{{ url_for('add_score', fight_id=fight.id, id=is_user) }}" class="btn btn-primary">Comment fight</a>
+            {% else %}
+            <a href="{{ url_for('edit_score', fight_id=fight.id, id=is_user) }}" class="btn btn-primary">Edit comment</a>
+            {% endif %}
+            {% endif %}
+        </div>
     </div>
+    <div class="col-sm-4"></div>
 </div>
 
 {% endblock %}

@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SelectField, DateField, validators, IntegerField, SubmitField
-from wtforms.validators import NumberRange, ValidationError, DataRequired
+from wtforms.validators import NumberRange, ValidationError, DataRequired, Optional
+from wtforms.widgets import TextArea
 
 
 class LoginForm(FlaskForm):
@@ -27,11 +28,10 @@ class FighterForm(FlaskForm):
     lastname = StringField("Last Name", validators=[DataRequired()])
     nickname = StringField("Nickname")
     born = DateField("Born", validators=[DataRequired()], format="%Y-%m-%d")
-    feet = IntegerField("Feet", validators=[validators.Optional(), NumberRange(min=4, max=7)])
+    feet = IntegerField("Feet", validators=[DataRequired(), NumberRange(min=4, max=7)])
     inches = IntegerField("Inches", validators=[validators.Optional(), NumberRange(min=0, max=11)])
-    weight = IntegerField("Weight (lbs)", validators=[validators.Optional(), NumberRange(min=100, max=500)])
+    weight = IntegerField("Weight (lbs)", validators=[DataRequired(), NumberRange(min=100, max=500)])
     country = SelectField("Country", coerce=int)
-    submit = SubmitField("Submit")
 
 
 class FightForm(FlaskForm):
@@ -40,14 +40,14 @@ class FightForm(FlaskForm):
     referee = SelectField("Referee", coerce=int)
     rounds = IntegerField("Rounds", validators=[DataRequired(), NumberRange(min=1, max=5)])
     ending_round = IntegerField("Ending Round", validators=[DataRequired(), NumberRange(min=1, max=5)])
-    minutes = IntegerField("Minutes", validators=[validators.Optional(), NumberRange(min=0, max=5)])
-    seconds = IntegerField("Seconds", validators=[validators.Optional(), NumberRange(min=0, max=59)])
+    minutes = IntegerField("Minutes", validators=[Optional(), NumberRange(min=0, max=5)])
+    seconds = IntegerField("Seconds", validators=[Optional(), NumberRange(min=0, max=59)])
     winner = SelectField("Winner", coerce=int)
     winning_method = StringField("Winning Method", validators=[DataRequired()])
     date = DateField("Date", validators=[DataRequired()], format="%Y-%m-%d")
     event = SelectField("Event", coerce=int)
     fight_order = IntegerField("Fight Order")
-    weight_class = SelectField("Weight class", coerce=int, validators=[validators.Optional(), NumberRange(min=100, max=500)])
+    weight_class = SelectField("Weight class", coerce=int, validators=[DataRequired(), NumberRange(min=100, max=500)])
     submit = SubmitField("Submit")
     
     def validate_fighter1(self, fighter1):
@@ -74,14 +74,7 @@ class EventForm(FlaskForm):
 
 
 class ScoreForm(FlaskForm):
-    round1_f1 = IntegerField("R1", validators=[validators.Optional(), NumberRange(min=7, max=10)])
-    round2_f1 = IntegerField("R2", validators=[validators.Optional(), NumberRange(min=7, max=10)])
-    round3_f1 = IntegerField("R3", validators=[validators.Optional(), NumberRange(min=7, max=10)])
-    round4_f1 = IntegerField("R4", validators=[validators.Optional(), NumberRange(min=7, max=10)])
-    round5_f1 = IntegerField("R5", validators=[validators.Optional(), NumberRange(min=7, max=10)])
-    round1_f2 = IntegerField("R1", validators=[validators.Optional(), NumberRange(min=7, max=10)])
-    round2_f2 = IntegerField("R2", validators=[validators.Optional(), NumberRange(min=7, max=10)])
-    round3_f2 = IntegerField("R3", validators=[validators.Optional(), NumberRange(min=7, max=10)])
-    round4_f2 = IntegerField("R4", validators=[validators.Optional(), NumberRange(min=7, max=10)])
-    round5_f2 = IntegerField("R5", validators=[validators.Optional(), NumberRange(min=7, max=10)])
-    comment = StringField("Comment", validators=[validators.Length(max=500)])
+    score_f1 = IntegerField("R1", validators=[Optional(), NumberRange(min=20, max=50)])
+    score_f2 = IntegerField("R2", validators=[Optional(), NumberRange(min=20, max=50)])
+    comment = StringField("Comment", validators=[Optional(), validators.Length(max=280)])
+    submit = SubmitField("Submit")

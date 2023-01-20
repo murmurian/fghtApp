@@ -48,3 +48,10 @@ def authorize():
     if not is_admin(session["user_id"]):
         return False
     return True
+
+
+def get_score(fight_id, user_id):
+    sql = "SELECT * FROM scorecards WHERE fight=:fight_id AND username=:user_id"
+    result = db.session.execute(sql, {"fight_id": fight_id, "user_id": user_id})
+    return result.fetchone()
+

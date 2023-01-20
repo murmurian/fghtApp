@@ -3,8 +3,7 @@ from db import db
 
 
 def get_countries():
-    result = db.session.execute(
-        "SELECT * FROM countries")
+    result = db.session.execute("SELECT * FROM countries")
     return result.fetchall()
 
 
@@ -69,13 +68,29 @@ def add_fight(form):
 
     sql = "SELECT * FROM fights WHERE (fighter1 = :fighter1 AND fighter2 = :fighter2) OR (fighter1 = :fighter2 AND fighter2 = :fighter1) AND date = :date"
     existing_fight = db.session.execute(
-        sql, {"fighter1": fighter1, "fighter2": fighter2, "date": date}).fetchone()
+        sql, {"fighter1": fighter1, "fighter2": fighter2, "date": date}
+    ).fetchone()
     if existing_fight:
         return False
 
     sql = "INSERT INTO fights (fighter1, fighter2, referee, rounds, ending_time, winner, draw, winning_method, date, event, fight_order, weight_class) VALUES (:fighter1, :fighter2, :referee, :rounds, :ending_time, :winner, :draw, :method, :date, :event, :fight_order, :weight_class)"
-    db.session.execute(sql, {"fighter1": fighter1, "fighter2": fighter2, "referee": referee,
-                       "rounds": rounds, "ending_time": ending_time, "winner": winner, "draw":draw, "method": method, "date": date, "event": event, "fight_order": fight_order, "weight_class": weight_class})
+    db.session.execute(
+        sql,
+        {
+            "fighter1": fighter1,
+            "fighter2": fighter2,
+            "referee": referee,
+            "rounds": rounds,
+            "ending_time": ending_time,
+            "winner": winner,
+            "draw": draw,
+            "method": method,
+            "date": date,
+            "event": event,
+            "fight_order": fight_order,
+            "weight_class": weight_class,
+        },
+    )
     db.session.commit()
     return True
 
@@ -102,8 +117,24 @@ def edit_fight(form, fight_id):
     weight_class = form.weight_class.data
 
     sql = "UPDATE fights SET fighter1 = :fighter1, fighter2 = :fighter2, referee = :referee, rounds = :rounds, ending_time = :ending_time, winner = :winner, draw = :draw, winning_method = :method, date = :date, event = :event, fight_order = :fight_order, weight_class = :weight_class WHERE id = :fight_id"
-    db.session.execute(sql, {"fighter1": fighter1, "fighter2": fighter2, "referee": referee,
-                       "rounds": rounds, "ending_time": ending_time, "winner": winner, "draw":draw, "method": method, "date": date, "event": event, "fight_order": fight_order, "weight_class": weight_class, "fight_id": fight_id})
+    db.session.execute(
+        sql,
+        {
+            "fighter1": fighter1,
+            "fighter2": fighter2,
+            "referee": referee,
+            "rounds": rounds,
+            "ending_time": ending_time,
+            "winner": winner,
+            "draw": draw,
+            "method": method,
+            "date": date,
+            "event": event,
+            "fight_order": fight_order,
+            "weight_class": weight_class,
+            "fight_id": fight_id,
+        },
+    )
     db.session.commit()
 
 
@@ -131,8 +162,7 @@ def get_fight(fight_id):
 
 
 def get_events():
-    result = db.session.execute(
-        "SELECT * FROM events")
+    result = db.session.execute("SELECT * FROM events")
     return result.fetchall()
 
 
@@ -154,8 +184,9 @@ def add_event(form):
         return False
 
     sql = "INSERT INTO events (name, date, location, promotion) VALUES (:name, :date, :location, :promotion)"
-    db.session.execute(sql, {"name": name, "date": date,
-                       "location": location, "promotion": promotion})
+    db.session.execute(
+        sql, {"name": name, "date": date, "location": location, "promotion": promotion}
+    )
     db.session.commit()
     return True
 
@@ -167,8 +198,16 @@ def edit_event(form, event_id):
     promotion = form.promotion.data.strip()
 
     sql = "UPDATE events SET name = :name, date = :date, location = :location, promotion = :promotion WHERE id = :event_id"
-    db.session.execute(sql, {"name": name, "date": date,
-                       "location": location, "promotion": promotion, "event_id": event_id})
+    db.session.execute(
+        sql,
+        {
+            "name": name,
+            "date": date,
+            "location": location,
+            "promotion": promotion,
+            "event_id": event_id,
+        },
+    )
     db.session.commit()
 
 
@@ -182,6 +221,76 @@ def get_fights(event_id):
     sql = "SELECT * FROM fights WHERE event = :event_id"
     result = db.session.execute(sql, {"event_id": event_id})
     return result.fetchall()
+
+
+def score_fight(form, fight_id, id):
+    sql = "SELECT * FROM scorecards WHERE fight = :fight_id AND username = :id"
+    existing_score = db.session.execute(
+        sql, {"fight_id": fight_id, "id": id}
+    ).fetchone()
+    if existing_score:
+        return False
+    score_f1 = form.score_f1.data
+    score_f2 = form.score_f2.data
+    comment = form.comment.data
+    sql = "INSERT INTO scorecards (username, fight, score_f1, score_f2, comment) VALUES (:username, :fight, :score_f1, :score_f2, :comment)"
+    db.session.execute(
+        sql,
+        {
+            "username": id,
+            "fight": fight_id,
+            "score_f1": score_f1,
+            "score_f2": score_f2,
+            "comment": comment,
+        },
+    )
+    db.session.commit()
+    return True
+
+
+def edit_score(form, score_id):
+    score_f1 = form.score_f1.data
+    score_f2 = form.score_f2.data
+    comment = form.comment.data
+    sql = "UPDATE scorecards SET score_f1 = :score_f1, score_f2 = :score_f2, comment = :comment WHERE id = :score_id"
+    db.session.execute(
+        sql,
+        {
+            "score_f1": score_f1,
+            "score_f2": score_f2,
+            "comment": comment,
+            "score_id": score_id,
+        },
+    )
+    db.session.commit()
+
+
+def check_score(form, fight):
+    if (
+        (fight.rounds == 5 and fight.ending_time.strftime("%M:%S") != "25:00")
+        or (fight.rounds == 3 and fight.ending_time.strftime("%M:%S") != "15:00")
+    ) and (form.score_f1.data or form.score_f2.data):
+        return "Fight did not end in full time, please leave a comment instead."
+    if not form.score_f1.data and not form.score_f2.data:
+        return
+    if fight.rounds == 5:
+        if form.score_f1.data == 50 == form.score_f2.data:
+            return "10-10 rounds are extremely rare, please check your score."
+        if form.score_f1.data < 42 or form.score_f2.data < 42:
+            return "Your score for one of the fighters is very low, please check your score.\nRounds below 10-8 are extremely rare."
+    if fight.rounds == 3:
+        if form.score_f1.data > 30 or form.score_f2.data > 30:
+            return "error"
+        if form.score_f1.data == 30 == form.score_f2.data:
+            return "10-10 rounds are extremely rare, please check your score."
+        if form.score_f1.data < 24 or form.score_f2.data < 24:
+            return "Your score for one of the fighters is very low, please check your score.\nRounds below 10-8 are extremely rare."
+
+
+def delete_score(score_id):
+    sql = "DELETE FROM scorecards WHERE id = :score_id"
+    db.session.execute(sql, {"score_id": score_id})
+    db.session.commit()
 
 
 def calculate_ending_time(form):

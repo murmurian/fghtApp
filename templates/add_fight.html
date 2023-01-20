@@ -143,9 +143,11 @@
 </form>
 {% if not is_new %}
 <div class="text-center">
-    <p>Remove fighter from database:</p>
-    <a href="{{ url_for('delete_fight', fight_id=fight.id) }}" class="btn btn-danger"
-        onclick="return confirmPress()">Delete</a>
+    <form method="POST" action="{{ url_for('delete_fight', fight_id=fight.id) }}">
+        {{ form.csrf_token }}
+        <p>Remove fight from database:</p>
+        <button type="submit" class="btn btn-danger" onclick="return confirmPress()">Delete</button>
+    </form>
 </div>
 <script>
     function confirmPress() {

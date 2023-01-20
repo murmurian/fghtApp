@@ -28,8 +28,11 @@
 </form>
 {% if not is_new %}
 <div class="text-center">
-    <p>Remove event from database:</p>
-    <a href="{{ url_for('delete_event', event_id=event.id) }}" class="btn btn-danger" onclick="return confirmPress()">Delete</a>
+    <form method="POST" action="{{ url_for('delete_event', event_id=event.id) }}">
+        {{ form.csrf_token }}
+        <p>Remove event from database:</p>
+        <button type="submit" class="btn btn-danger" onclick="return confirmPress()">Delete</button>
+    </form>
 </div>
 <script>
 function confirmPress() {
