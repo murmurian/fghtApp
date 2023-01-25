@@ -63,7 +63,10 @@ def add_fight(form):
         event = None
     else:
         event = form.event.data
-    fight_order = form.fight_order.data
+    if form.fight_order.data:
+        fight_order = form.fight_order.data
+    else:
+        fight_order = None
     weight_class = form.weight_class.data
 
     sql = "SELECT * FROM fights WHERE (fighter1 = :fighter1 AND fighter2 = :fighter2) OR (fighter1 = :fighter2 AND fighter2 = :fighter1) AND date = :date"
@@ -225,7 +228,7 @@ def get_fights(event_id):
 
 
 def score_fight(form, fight_id, id):
-    sql = "SELECT * FROM scorecards WHERE fight = :fight_id AND username = :id"
+    sql = "SELECT * FROM scorecards WHERE fight = :fight_id AND user_id = :id"
     existing_score = db.session.execute(
         sql, {"fight_id": fight_id, "id": id}
     ).fetchone()
@@ -234,11 +237,11 @@ def score_fight(form, fight_id, id):
     score_f1 = form.score_f1.data
     score_f2 = form.score_f2.data
     comment = form.comment.data
-    sql = "INSERT INTO scorecards (username, fight, score_f1, score_f2, comment) VALUES (:username, :fight, :score_f1, :score_f2, :comment)"
+    sql = "INSERT INTO scorecards (user_id, fight, score_f1, score_f2, comment) VALUES (:user_id, :fight, :score_f1, :score_f2, :comment)"
     db.session.execute(
         sql,
         {
-            "username": id,
+            "user_id": id,
             "fight": fight_id,
             "score_f1": score_f1,
             "score_f2": score_f2,
@@ -273,7 +276,9 @@ def check_score(form, fight):
     ) and (form.score_f1.data or form.score_f2.data):
         return "Fight did not end in full time, please leave a comment instead."
     if not form.score_f1.data and not form.score_f2.data:
-        return
+        return "Consider giving a score for the fight!"
+    if (form.score_f1.data and not form.score_f2.data) or (form.score_f2.data and not form.score_f1.data):
+        return "error1"
     if fight.rounds == 5:
         if form.score_f1.data + form.score_f2.data > 95:
             return "10-10 rounds are extremely rare, please check your score."
@@ -281,7 +286,7 @@ def check_score(form, fight):
             return "Your score for one of the fighters is very low, please check your score.\nRounds below 10-8 are extremely rare."
     if fight.rounds == 3:
         if form.score_f1.data > 30 or form.score_f2.data > 30:
-            return "error"
+            return "error2"
         if form.score_f1.data + form.score_f2.data > 57:
             return "10-10 rounds are extremely rare, please check your score."
         if form.score_f1.data < 25 or form.score_f2.data < 25:

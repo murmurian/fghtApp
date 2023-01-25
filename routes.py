@@ -128,6 +128,7 @@ def edit_fighter(fighter_id):
     if request.method == "POST" and form.validate_on_submit():
         persons.edit_fighter(form, fighter_id)
         flash("Fighter info updated")
+    fighter = persons.get_fighter(fighter_id)
     return render_template("add_fighter.html", form=form, fighter=fighter)
 
 
@@ -268,7 +269,8 @@ def fight_detail(fight_id):
             final_round, fight.ending_time.strftime("%M:%S")
         )
         userscore = users.get_score(fight_id, session.get("user_id"))
-        all_scores = users.get_all_scores(fight_id)
+        popular_scores = users.get_popular_scores(fight_id)
+        all_scores = users.get_all_scores(fight_id, True)
         return render_template(
             "fight.html",
             fight=fight,
@@ -277,6 +279,7 @@ def fight_detail(fight_id):
             ending_time=ending_time,
             is_user=session.get("user_id"),
             userscore=userscore,
+            popular_scores=popular_scores,
             all_scores=all_scores,
         )
     else:
@@ -438,12 +441,13 @@ def add_score(fight_id, id):
     form = ScoreForm()
     if request.method == "POST" and form.validate_on_submit():
         check_score = matches.check_score(form, fight)
-        if check_score:
-            if check_score == "error":
-                flash(
-                    "You can't score more than 30 points for a fighter in a 3 round fight, please check your score.")
-                return redirect("/fights/" + str(fight_id) + "/new/" + str(id))
-            flash(check_score)
+        if check_score == "error1":
+            flash("Please give a score for both fighters.")
+            return redirect("/fights/" + str(fight_id) + "/new/" + str(id))
+        elif check_score == "error2":
+            flash("You can't score more than 30 points for a fighter in a 3 round fight, please check your score.")
+            return redirect("/fights/" + str(fight_id) + "/new/" + str(id))
+        flash(check_score)
         if matches.score_fight(form, fight_id, id):
             flash("Score added successfully")
         else:
@@ -476,12 +480,13 @@ def edit_score(fight_id, id):
     form = ScoreForm()
     if request.method == "POST" and form.validate_on_submit():
         check_score = matches.check_score(form, fight)
-        if check_score:
-            if check_score == "error":
-                flash(
-                    "You can't score more than 30 points for a fighter in a 3 round fight, please check your score.")
-                return redirect("/fights/" + str(fight_id) + "/new/" + str(id))
-            flash(check_score)
+        if check_score == "error1":
+            flash("Please give a score for both fighters.")
+            return redirect("/fights/" + str(fight_id) + "/edit/" + str(id))
+        elif check_score == "error2":
+            flash("You can't score more than 30 points for a fighter in a 3 round fight, please check your score.")
+            return redirect("/fights/" + str(fight_id) + "/edit/" + str(id))
+        flash(check_score)
         matches.edit_score(form, score.id)
         flash("Score updated")
         return redirect("/fights/" + str(fight_id))
@@ -509,3 +514,17 @@ def delete_score(fight_id, id):
         matches.delete_score(score.id)
         flash("Score deleted")
     return redirect("/fights/" + str(fight_id))
+
+
+@app.route("/fights/<int:fight_id>/scorecards/")
+def scorecards(fight_id):
+    fight = matches.get_fight(fight_id)
+    if not fight:
+        flash("Fight not found")
+        return redirect("/fights")
+    scores = users.get_all_scores(fight_id, False)
+    final_round = matches.final_round(fight.ending_time.strftime("%M:%S"))
+    ending_time = matches.ending_time(
+        final_round, fight.ending_time.strftime("%M:%S")
+    )
+    return render_template("scorecards.html", fight=fight, scores=scores, final_round=final_round, ending_time=ending_time)

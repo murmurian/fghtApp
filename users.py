@@ -44,13 +44,13 @@ def authorize():
 
 
 def get_score(fight_id, user_id):
-    sql = "SELECT * FROM scorecards WHERE fight=:fight_id AND username=:user_id"
+    sql = "SELECT * FROM scorecards WHERE fight=:fight_id AND user_id=:user_id"
     result = db.session.execute(
         sql, {"fight_id": fight_id, "user_id": user_id})
     return result.fetchone()
 
 
-def get_all_scores(fight_id):
+def get_popular_scores(fight_id):
     sql = """SELECT score_f1, score_f2, COUNT(*) as count
         FROM scorecards
         WHERE fight = :fight_id
@@ -61,13 +61,14 @@ def get_all_scores(fight_id):
     return result.fetchall()
 
 
-def get_random_comments(fight_id):
-    sql = "SELECT comment FROM scorecards WHERE fight=:fight_id ORDER BY RANDOM LIMIT 3"
-    result = db.session.execute(sql, {"fight_id": fight_id})
-    return result.fetchall()
-
-
-def get_all_comments(fight_id):
-    sql = "SELECT comment FROM scorecards WHERE fight=:fight_id"
+def get_all_scores(fight_id, limit):
+    sql = """SELECT scorecards.*, users.username
+        FROM scorecards
+        LEFT JOIN users ON scorecards.user_id = users.id
+        WHERE scorecards.fight=:fight_id"""
+    if limit:
+        sql += " ORDER BY RANDOM() LIMIT 5"
+    else:
+        sql += " ORDER BY id DESC"
     result = db.session.execute(sql, {"fight_id": fight_id})
     return result.fetchall()

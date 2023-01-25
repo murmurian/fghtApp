@@ -15,7 +15,8 @@
         </div>
         <div class="col-sm-4">
             <label for="{{ form.nickname.id }}">Nickname (optional)</label>
-            {{ form.nickname(class="form-control", value=fighter.nickname if not is_new else '') }}
+            {% if fighter is not defined %} {% set fighter = {} %} {% endif %}
+            {{ form.nickname(class="form-control", value='' if not fighter.nickname else fighter.nickname if not is_new else '') }}
         </div>
         <div class="col-sm-4">
             <label for="{{ form.lastname.id }}">Last name</label>

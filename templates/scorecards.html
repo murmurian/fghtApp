@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1 class="text-center my-3"><a href="{{ url_for('fight_detail', fight_id = fight.id) }}">{{ fight.f1_firstname }} {{
+        fight.f1_lastname }} vs {{ fight.f2_firstname }} {{ fight.f2_lastname }}</a></h1>
+<label for="Scorecards">User scorecards and comments:</label>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">User</th>
+            {% if (final_round == 5 or final_round == 3) and ending_time.strftime("%M:%S") == "05:00" %}
+            <th scope="col">{{ fight.f1_lastname }}</th>
+            <th scope="col">{{ fight.f2_lastname }}</th>
+            {% endif %}
+            <th scope="col">Comment</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for score in scores %}
+        <tr>
+            <td>{{ score.username }}</td>
+            {% if (final_round == 5 or final_round == 3) and ending_time.strftime("%M:%S") == "05:00" %}
+            {% if score.score_f1 and score.score_f2 %}
+            <td>{{ score.score_f1 }}</td>
+            <td>{{ score.score_f2 }}</td>
+            {% else %}
+            <td>-</td>
+            <td>-</td>
+            {% endif %}
+            {% endif %}
+            <td>{{ score.comment }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </tr>
+    </thead>
+</table>
+{% endblock %}
