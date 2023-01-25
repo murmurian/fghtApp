@@ -1,6 +1,6 @@
+from flask import flash, redirect, render_template, request, session
 from app import app
 from db import db
-from flask import flash, redirect, render_template, request, session
 from forms import (
     EventForm,
     FighterForm,
@@ -11,7 +11,9 @@ from forms import (
     LoginForm,
     ScoreForm,
 )
-import users, persons, matches
+import users
+import persons
+import matches
 
 
 @app.route("/")
@@ -66,6 +68,7 @@ def register():
         if not users.register(username, password):
             flash("Username already registered")
             return render_template("/register.html", form=form)
+        flash("Registration successful")
         return redirect("/login")
     return render_template("register.html", form=form)
 
@@ -225,7 +228,8 @@ def edit_fight(fight_id):
     ]
     form.weight_class.choices = persons.get_weight_classes()
     final_round = matches.final_round(fight.ending_time.strftime("%M:%S"))
-    ending_time = matches.ending_time(final_round, fight.ending_time.strftime("%M:%S"))
+    ending_time = matches.ending_time(
+        final_round, fight.ending_time.strftime("%M:%S"))
     minutes = ending_time.strftime("%M")
     seconds = ending_time.strftime("%S")
     if request.method == "POST" and form.validate_on_submit():
@@ -264,6 +268,7 @@ def fight_detail(fight_id):
             final_round, fight.ending_time.strftime("%M:%S")
         )
         userscore = users.get_score(fight_id, session.get("user_id"))
+        all_scores = users.get_all_scores(fight_id)
         return render_template(
             "fight.html",
             fight=fight,
@@ -272,6 +277,7 @@ def fight_detail(fight_id):
             ending_time=ending_time,
             is_user=session.get("user_id"),
             userscore=userscore,
+            all_scores=all_scores,
         )
     else:
         flash("Fight not found")
@@ -434,7 +440,8 @@ def add_score(fight_id, id):
         check_score = matches.check_score(form, fight)
         if check_score:
             if check_score == "error":
-                flash("You can't score more than 30 points for a fighter in a 3 round fight, please check your score.")
+                flash(
+                    "You can't score more than 30 points for a fighter in a 3 round fight, please check your score.")
                 return redirect("/fights/" + str(fight_id) + "/new/" + str(id))
             flash(check_score)
         if matches.score_fight(form, fight_id, id):
@@ -471,7 +478,8 @@ def edit_score(fight_id, id):
         check_score = matches.check_score(form, fight)
         if check_score:
             if check_score == "error":
-                flash("You can't score more than 30 points for a fighter in a 3 round fight, please check your score.")
+                flash(
+                    "You can't score more than 30 points for a fighter in a 3 round fight, please check your score.")
                 return redirect("/fights/" + str(fight_id) + "/new/" + str(id))
             flash(check_score)
         matches.edit_score(form, score.id)

@@ -185,7 +185,8 @@ def add_event(form):
 
     sql = "INSERT INTO events (name, date, location, promotion) VALUES (:name, :date, :location, :promotion)"
     db.session.execute(
-        sql, {"name": name, "date": date, "location": location, "promotion": promotion}
+        sql, {"name": name, "date": date,
+              "location": location, "promotion": promotion}
     )
     db.session.commit()
     return True
@@ -274,16 +275,16 @@ def check_score(form, fight):
     if not form.score_f1.data and not form.score_f2.data:
         return
     if fight.rounds == 5:
-        if form.score_f1.data == 50 == form.score_f2.data:
+        if form.score_f1.data + form.score_f2.data > 95:
             return "10-10 rounds are extremely rare, please check your score."
         if form.score_f1.data < 42 or form.score_f2.data < 42:
             return "Your score for one of the fighters is very low, please check your score.\nRounds below 10-8 are extremely rare."
     if fight.rounds == 3:
         if form.score_f1.data > 30 or form.score_f2.data > 30:
             return "error"
-        if form.score_f1.data == 30 == form.score_f2.data:
+        if form.score_f1.data + form.score_f2.data > 57:
             return "10-10 rounds are extremely rare, please check your score."
-        if form.score_f1.data < 24 or form.score_f2.data < 24:
+        if form.score_f1.data < 25 or form.score_f2.data < 25:
             return "Your score for one of the fighters is very low, please check your score.\nRounds below 10-8 are extremely rare."
 
 
@@ -297,7 +298,8 @@ def calculate_ending_time(form):
     round = form.ending_round.data
     minutes = form.minutes.data
     seconds = form.seconds.data
-    ending_time = time(hour=0, minute=minutes + (round - 1) * 5, second=seconds)
+    ending_time = time(hour=0, minute=minutes +
+                       (round - 1) * 5, second=seconds)
     return ending_time
 
 
