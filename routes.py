@@ -75,15 +75,10 @@ def register():
 @app.route("/fighters/", methods=["GET", "POST"])
 def fighters_route():
     form = SearchForm()
-    if request.method == "POST" and form.validate_on_submit() and form.q.data:
-        query = form.q.data
-        sql = "SELECT fighters.*, countries.name AS country_name, EXTRACT(YEAR FROM CURRENT_DATE) - EXTRACT(YEAR FROM born) AS age FROM fighters JOIN countries ON fighters.country = countries.id WHERE fighters.firstname like :query or fighters.lastname like :query or countries.name like :query"
-        result = db.session.execute(sql, {"query": "%" + query + "%"})
+    if request.method == "POST" and form.validate_on_submit():
+        fighters = persons.search_fighters(form)
     else:
-        result = db.session.execute(
-            "SELECT fighters.*, countries.name AS country_name, EXTRACT(YEAR FROM CURRENT_DATE) - EXTRACT(YEAR FROM born) AS age FROM fighters JOIN countries ON fighters.country = countries.id"
-        )
-    fighters = result.fetchall()
+        fighters = persons.get_random_fighters()
     return render_template(
         "fighters.html", count=len(fighters), fighters=fighters, form=form
     )

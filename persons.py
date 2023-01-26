@@ -6,6 +6,24 @@ def get_fighters():
     return result.fetchall()
 
 
+def get_random_fighters():
+    result = db.session.execute("SELECT fighters.*, countries.name AS country_name FROM fighters JOIN countries ON fighters.country = countries.id ORDER BY RANDOM() LIMIT 10")
+    return result.fetchall()
+
+
+def search_fighters(form):
+    parts = form.search.data.split()
+    if not parts:
+        return get_random_fighters()
+    if len(parts) == 1:
+        sql = "SELECT fighters.*, countries.name AS country_name FROM fighters JOIN countries ON fighters.country = countries.id WHERE firstname ILIKE :search OR lastname ILIKE :search OR nickname ILIKE :search ORDER BY firstname"
+        result = db.session.execute(sql, {"search": f"%{form.search.data}%"})
+    else:
+        sql = "SELECT fighters.*, countries.name AS country_name FROM fighters JOIN countries ON fighters.country = countries.id WHERE (firstname ILIKE :search1 AND lastname ILIKE :search2) OR (firstname ILIKE :search2 AND lastname ILIKE :search1) ORDER BY firstname"
+        result = db.session.execute(sql, {"search1": f"%{parts[0]}%", "search2": f"%{parts[1]}%"})
+    return result.fetchall()
+    
+
 def get_fighter(id):
     sql = "SELECT f.*, c.id AS country_id, c.name AS country_name FROM fighters f JOIN countries c ON f.country = c.id WHERE f.id = :id"
     result = db.session.execute(sql, {"id": id}).fetchone()

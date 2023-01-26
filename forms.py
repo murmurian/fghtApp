@@ -19,7 +19,7 @@ class RegistrationForm(FlaskForm):
 
 
 class SearchForm(FlaskForm):
-    q = StringField("Search", [validators.Length(max=30, message="Search term must be less than 30 characters")])
+    search = StringField("Search", [validators.Length(max=30, message="Search term must be less than 30 characters")])
     submit = SubmitField("Submit")
 
 

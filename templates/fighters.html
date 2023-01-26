@@ -1,24 +1,41 @@
 {% extends "layout.html" %}
 
 {% block content %}
-
-<div class="container">
-    <h1 class="text-center my-3">Fighters</h1>
-    <form method="POST" action="{{ url_for('fighters_route') }}" class="form-inline my-3">
-        {{ form.csrf_token }}
-        <div class="form-group mx-sm-3">
-            <label for="q" class="sr-only">Search</label>
-            {{ form.q(class='form-control', placeholder='Search') }}
-        </div>
-        <button class="btn btn-primary" type="submit">Search</button>
-    </form>
-    <p>There are {{ count }} fighters in the database:</p>
-    <ul class="list-group">
-        {% for fighter in fighters %}
-        <li class="list-group-item">
-            <a href="{{ url_for('fighter_profile', fighter_id=fighter.id) }}">{{ fighter.firstname }} {% if fighter.nickname %}"{{ fighter.nickname }}"{% endif %} {{ fighter.lastname }} ({{ fighter.born }}), {{ fighter.country_name }}</a>
-        </li>
-        {% endfor %}
-    </ul>
+<h1 class="text-center my-3">Fighters</h1>
+<div class="row">
+    <div class="col-4"></div>
+    <div class="col-4">
+        <form method="POST" action="{{ url_for('fighters_route') }}" class="form-inline my-3 text-center">
+            {{ form.csrf_token }}
+            <div class="form-group mx-auto">
+                <label for="q" class="sr-only">Search</label>
+                {{ form.search(class='form-control', placeholder='Search') }}
+            </div>
+            <button class="btn btn-primary mx-auto" type="submit">Search</button>
+        </form>
+    </div>
+    <div class="col-4"></div>
 </div>
+<div class="text-center">You can search by first name, last name, both or nickname</div>
+<table class="table table-striped my-3">
+    <thead>
+        <tr>
+            <th scope="col">Fighter</th>
+            <th scope="col">Born</th>
+            <th scope="col">Country</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for fighter in fighters %}
+        <tr>
+            <td>
+                <a href="{{ url_for('fighter_profile', fighter_id=fighter.id) }}">{{ fighter.firstname }} {% if
+                    fighter.nickname %}"{{ fighter.nickname }}"{% endif %} {{ fighter.lastname }}</a>
+            </td>
+            <td>{{ fighter.born }}</td>
+            <td>{{ fighter['country_name'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}"
