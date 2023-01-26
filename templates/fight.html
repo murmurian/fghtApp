@@ -80,11 +80,11 @@
             <div class="text-center my-3">
                 {% if is_admin or is_user %}
                 {% if not userscore %}
-                <a href="{{ url_for('add_score', fight_id=fight.id, id=is_user) }}" class="btn btn-primary">Comment /
+                <a href="{{ url_for('add_score', fight_id=fight.id, user_id=is_user) }}" class="btn btn-primary">Comment /
                     score
                     fight</a>
                 {% else %}
-                <a href="{{ url_for('edit_score', fight_id=fight.id, id=is_user) }}" class="btn btn-primary">Edit
+                <a href="{{ url_for('edit_score', fight_id=fight.id, user_id=is_user) }}" class="btn btn-primary">Edit
                     comment / score</a>
                 {% endif %}
                 {% endif %}

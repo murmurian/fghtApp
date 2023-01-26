@@ -7,7 +7,7 @@
 <a href="{{ url_for('fight_detail', fight_id=fight.id ) }}">{{ fight.f1_firstname }} {{ fight.f1_lastname }} vs {{
   fight.f2_firstname }} {{ fight.f2_lastname }}</a>
 <form method="POST"
-  action="{% if is_new %}{{ url_for('add_score', fight_id=fight.id, id=is_user ) }}{% else %}{{ url_for('edit_score', fight_id=fight.id, id=is_user ) }}{% endif %}">
+  action="{% if is_new %}{{ url_for('add_score', fight_id=fight.id, user_id=user_id ) }}{% else %}{{ url_for('edit_score', fight_id=fight.id, user_id=user_id ) }}{% endif %}">
   {{ form.hidden_tag() }}
   {% if (fight.rounds == 5 and fight.ending_time.strftime("%M:%S") == "25:00") or (fight.rounds == 3 and
   fight.ending_time.strftime("%M:%S") == "15:00") %}
@@ -34,7 +34,7 @@
 </form>
 {% if not is_new %}
 <div class="text-center">
-  <form method="POST" action="{{ url_for('delete_score', fight_id=fight.id, id=is_user) }}">
+  <form method="POST" action="{{ url_for('delete_score', fight_id=fight.id, user_id=user_id) }}">
     {{ form.hidden_tag() }}
     <p>Remove score from database:</p>
     <button type="submit" class="btn btn-danger" onclick="return confirmPress()">Delete</button>

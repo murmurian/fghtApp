@@ -256,6 +256,7 @@ def edit_score(form, score_id):
     score_f1 = form.score_f1.data
     score_f2 = form.score_f2.data
     comment = form.comment.data
+    print(score_f1, score_f2, comment, score_id)
     sql = "UPDATE scorecards SET score_f1 = :score_f1, score_f2 = :score_f2, comment = :comment WHERE id = :score_id"
     db.session.execute(
         sql,

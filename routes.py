@@ -29,13 +29,12 @@ def login():
     form = LoginForm()
     username = form.username.data
     password = form.password.data
-    if request.method == "GET":
-        return render_template("login.html", form=form, session=session)
-    if users.login(username, password):
-        flash("Welcome back, " + username + "!")
-        return redirect("/")
-    else:
-        flash("No such username or password")
+    if request.method == "POST":
+        if users.login(username, password):
+            flash("Welcome back, " + username + "!")
+            return redirect("/")
+        else:
+            flash("No such username or password")
     return render_template("login.html", form=form, session=session)
 
 
@@ -426,12 +425,12 @@ def delete_event(event_id):
     return redirect("/events")
 
 
-@app.route("/fights/<int:fight_id>/new/<int:id>", methods=["GET", "POST"])
-def add_score(fight_id, id):
+@app.route("/fights/<int:fight_id>/new/<int:user_id>", methods=["GET", "POST"])
+def add_score(fight_id, user_id):
     if not session.get("user_id"):
         flash("You must register or login to add scores")
         return redirect("/fights/" + str(fight_id))
-    if not session.get("user_id") == id:
+    if not session.get("user_id") == user_id:
         flash("Action not authorized")
         return redirect("/fights/" + str(fight_id))
     fight = matches.get_fight(fight_id)
@@ -445,10 +444,12 @@ def add_score(fight_id, id):
             flash("Please give a score for both fighters.")
             return redirect("/fights/" + str(fight_id) + "/new/" + str(id))
         elif check_score == "error2":
-            flash("You can't score more than 30 points for a fighter in a 3 round fight, please check your score.")
+            flash(
+                "You can't score more than 30 points for a fighter in a 3 round fight, please check your score.")
             return redirect("/fights/" + str(fight_id) + "/new/" + str(id))
-        flash(check_score)
-        if matches.score_fight(form, fight_id, id):
+        if check_score:
+            flash(check_score)
+        if matches.score_fight(form, fight_id, user_id):
             flash("Score added successfully")
         else:
             flash("You have already scored this fight, did you mean to edit?")
@@ -457,23 +458,21 @@ def add_score(fight_id, id):
         "add_score.html",
         form=form,
         fight=fight,
-        id=id,
+        user_id=user_id,
         is_new=True,
-        is_user=session.get("user_id"),
     )
 
 
-@app.route("/fights/<int:fight_id>/edit/<int:id>", methods=["GET", "POST"])
-def edit_score(fight_id, id):
-    print(session.get("user_id"), id, users.is_admin(session.get("user_id")))
-    if session.get("user_id") != id and not users.is_admin(session.get("user_id")):
+@app.route("/fights/<int:fight_id>/edit/<int:user_id>", methods=["GET", "POST"])
+def edit_score(fight_id, user_id):
+    if session.get("user_id") != user_id and not users.is_admin(session.get("user_id")):
         flash("Action not authorized")
         return redirect("/fights/" + str(fight_id))
     fight = matches.get_fight(fight_id)
     if not fight:
         flash("Fight not found")
         return redirect("/fights")
-    score = users.get_score(fight_id, id)
+    score = users.get_score(fight_id, user_id)
     if not score:
         flash("You have not scored this fight yet")
         return redirect("/fights/" + str(fight_id))
@@ -484,9 +483,11 @@ def edit_score(fight_id, id):
             flash("Please give a score for both fighters.")
             return redirect("/fights/" + str(fight_id) + "/edit/" + str(id))
         elif check_score == "error2":
-            flash("You can't score more than 30 points for a fighter in a 3 round fight, please check your score.")
+            flash(
+                "You can't score more than 30 points for a fighter in a 3 round fight, please check your score.")
             return redirect("/fights/" + str(fight_id) + "/edit/" + str(id))
-        flash(check_score)
+        if check_score:
+            flash(check_score)
         matches.edit_score(form, score.id)
         flash("Score updated")
         return redirect("/fights/" + str(fight_id))
@@ -494,22 +495,21 @@ def edit_score(fight_id, id):
         "add_score.html",
         form=form,
         fight=fight,
-        id=id,
+        user_id=user_id,
         score=score,
-        is_user=session.get("user_id"),
     )
 
 
-@app.route("/fights/<int:fight_id>/delete/<int:id>", methods=["GET", "POST"])
-def delete_score(fight_id, id):
-    if session.get("user_id") != id and not users.is_admin(session.get("user_id")):
+@app.route("/fights/<int:fight_id>/delete/<int:user_id>", methods=["GET", "POST"])
+def delete_score(fight_id, user_id):
+    if session.get("user_id") != user_id and not users.is_admin(session.get("user_id")):
         flash("Action not authorized")
         return redirect("/fights/" + str(fight_id))
-    score = users.get_score(fight_id, id)
+    score = users.get_score(fight_id, user_id)
     if not score:
         flash("You have not scored this fight")
         return redirect("/fights/" + str(fight_id))
-    score = users.get_score(fight_id, id)
+    score = users.get_score(fight_id, user_id)
     if request.method == "POST":
         matches.delete_score(score.id)
         flash("Score deleted")
@@ -527,4 +527,11 @@ def scorecards(fight_id):
     ending_time = matches.ending_time(
         final_round, fight.ending_time.strftime("%M:%S")
     )
-    return render_template("scorecards.html", fight=fight, scores=scores, final_round=final_round, ending_time=ending_time)
+    return render_template(
+        "scorecards.html",
+        fight=fight,
+        scores=scores,
+        final_round=final_round,
+        ending_time=ending_time,
+        is_admin=users.is_admin(session.get("user_id")),
+    )

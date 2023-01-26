@@ -12,6 +12,9 @@
             <th scope="col">{{ fight.f2_lastname }}</th>
             {% endif %}
             <th scope="col">Comment</th>
+            {% if is_admin %}
+            <th scope="col">Edit</th>
+            {% endif %}
         </tr>
     </thead>
     <tbody>
@@ -28,6 +31,9 @@
             {% endif %}
             {% endif %}
             <td>{{ score.comment }}</td>
+            {% if is_admin %}
+            <td><a href="{{ url_for('edit_score', fight_id = score.fight, user_id = score.user_id) }}">Edit</a></td>
+            {% endif %}
         </tr>
         {% endfor %}
     </tbody>
