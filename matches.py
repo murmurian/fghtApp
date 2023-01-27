@@ -45,6 +45,23 @@ def get_fightlist(event_id):
     return result.fetchall()
 
 
+def get_fights_by_dates(form):
+    start_date = form.start_date.data
+    end_date = form.end_date.data
+    sql = """SELECT f.*,
+        f1.firstname AS f1_firstname, f1.lastname AS f1_lastname,
+        f2.firstname AS f2_firstname, f2.lastname AS f2_lastname,
+        e.name AS event_name
+        FROM fights f
+        LEFT JOIN fighters f1 ON f.fighter1 = f1.id
+        LEFT JOIN fighters f2 ON f.fighter2 = f2.id
+        LEFT JOIN events e ON f.event = e.id
+        WHERE f.date BETWEEN :start_date AND :end_date
+        ORDER BY f.date DESC"""
+    result = db.session.execute(sql, {"start_date": start_date, "end_date": end_date})
+    return result.fetchall()
+
+
 def add_fight(form):
     fighter1 = form.fighter1.data
     fighter2 = form.fighter2.data
@@ -256,7 +273,6 @@ def edit_score(form, score_id):
     score_f1 = form.score_f1.data
     score_f2 = form.score_f2.data
     comment = form.comment.data
-    print(score_f1, score_f2, comment, score_id)
     sql = "UPDATE scorecards SET score_f1 = :score_f1, score_f2 = :score_f2, comment = :comment WHERE id = :score_id"
     db.session.execute(
         sql,

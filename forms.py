@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SelectField, DateField, validators, IntegerField, SubmitField
-from wtforms.validators import NumberRange, ValidationError, DataRequired, Optional
-from wtforms.widgets import TextArea
+from wtforms.validators import NumberRange, DataRequired, Optional
 
 
 class LoginForm(FlaskForm):
@@ -49,14 +48,6 @@ class FightForm(FlaskForm):
     fight_order = IntegerField("Fight Order")
     weight_class = SelectField("Weight class", coerce=int, validators=[DataRequired(), NumberRange(min=100, max=500)])
     submit = SubmitField("Submit")
-    
-    def validate_fighter1(self, fighter1):
-        if self.fighter1.data == self.fighter2.data:
-            raise ValidationError("Fighter 1 and Fighter 2 must be different")
-    
-    def validate_winner(self, winner):
-        if winner.data not in [self.fighter1.data, self.fighter2.data, -1]:
-            raise ValidationError("Winner must be one of the fighters or a draw")
 
 
 class OfficialsForm(FlaskForm):
@@ -74,7 +65,13 @@ class EventForm(FlaskForm):
 
 
 class ScoreForm(FlaskForm):
-    score_f1 = IntegerField("R1", validators=[Optional(), NumberRange(min=20, max=50)])
-    score_f2 = IntegerField("R2", validators=[Optional(), NumberRange(min=20, max=50)])
+    score_f1 = IntegerField("R1", validators=[Optional(), NumberRange(min=21, max=50)])
+    score_f2 = IntegerField("R2", validators=[Optional(), NumberRange(min=21, max=50)])
     comment = StringField("Comment", validators=[Optional(), validators.Length(max=280)])
+    submit = SubmitField("Submit")
+
+
+class DateForm(FlaskForm):
+    start_date = DateField("Date", validators=[Optional()], format="%Y-%m-%d")
+    end_date = DateField("Date", validators=[Optional()], format="%Y-%m-%d")
     submit = SubmitField("Submit")

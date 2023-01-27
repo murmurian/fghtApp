@@ -45,8 +45,8 @@ CREATE TABLE fights (
   CONSTRAINT unique_fight UNIQUE (fighter1, fighter2, date)
 );
 
-
 CREATE INDEX event_idx ON fights (event);
+CREATE INDEX date_idx ON fights (date);
 
 CREATE TABLE events (
   id SERIAL PRIMARY KEY,

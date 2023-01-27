@@ -2,6 +2,7 @@ from flask import flash, redirect, render_template, request, session
 from app import app
 from db import db
 from forms import (
+    DateForm,
     EventForm,
     FighterForm,
     OfficialsForm,
@@ -80,7 +81,10 @@ def fighters_route():
     else:
         fighters = persons.get_random_fighters()
     return render_template(
-        "fighters.html", count=len(fighters), fighters=fighters, form=form
+        "fighters.html",
+        count=len(fighters),
+        fighters=fighters,
+        form=form,
     )
 
 
@@ -126,7 +130,7 @@ def edit_fighter(fighter_id):
     return render_template("add_fighter.html", form=form, fighter=fighter)
 
 
-@app.route("/fighters/delete/<int:fighter_id>")
+@app.route("/fighters/delete/<int:fighter_id>", methods=["POST"])
 def delete_fighter(fighter_id):
     if not users.authorize():
         flash("You are not authorized to delete fighters")
@@ -152,10 +156,14 @@ def fighter_profile(fighter_id):
         return redirect("/fighters")
 
 
-@app.route("/fights/")
+@app.route("/fights/", methods=["GET", "POST"])
 def fights_route():
-    fights = matches.get_fightlist(None)
-    return render_template("fights.html", count=len(fights), fights=fights)
+    form = DateForm()
+    if request.method == "POST" and form.validate_on_submit():
+        fights = matches.get_fights_by_dates(form)
+    else:
+        fights = matches.get_fightlist(None)
+    return render_template("fights.html", count=len(fights), fights=fights, form=form)
 
 
 @app.route("/fights/new", methods=["GET", "POST"])

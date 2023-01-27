@@ -7,7 +7,12 @@ def get_fighters():
 
 
 def get_random_fighters():
-    result = db.session.execute("SELECT fighters.*, countries.name AS country_name FROM fighters JOIN countries ON fighters.country = countries.id ORDER BY RANDOM() LIMIT 10")
+    result = db.session.execute("""SELECT fighters.*,
+        countries.name AS country_name
+        FROM fighters
+        JOIN countries ON fighters.country = countries.id
+        ORDER BY RANDOM()
+        LIMIT 10""")
     return result.fetchall()
 
 
@@ -16,17 +21,32 @@ def search_fighters(form):
     if not parts:
         return get_random_fighters()
     if len(parts) == 1:
-        sql = "SELECT fighters.*, countries.name AS country_name FROM fighters JOIN countries ON fighters.country = countries.id WHERE firstname ILIKE :search OR lastname ILIKE :search OR nickname ILIKE :search ORDER BY firstname"
+        sql = """SELECT fighters.*,
+        countries.name AS country_name
+        FROM fighters
+        JOIN countries ON fighters.country = countries.id
+        WHERE firstname ILIKE :search OR lastname ILIKE :search OR nickname ILIKE :search
+        ORDER BY firstname"""
         result = db.session.execute(sql, {"search": f"%{form.search.data}%"})
     else:
-        sql = "SELECT fighters.*, countries.name AS country_name FROM fighters JOIN countries ON fighters.country = countries.id WHERE (firstname ILIKE :search1 AND lastname ILIKE :search2) OR (firstname ILIKE :search2 AND lastname ILIKE :search1) ORDER BY firstname"
-        result = db.session.execute(sql, {"search1": f"%{parts[0]}%", "search2": f"%{parts[1]}%"})
+        sql = """SELECT fighters.*,
+            countries.name AS country_name
+            FROM fighters
+            JOIN countries ON fighters.country = countries.id
+            WHERE (firstname ILIKE :search1 AND lastname ILIKE :search2)
+            OR (firstname ILIKE :search2 AND lastname ILIKE :search1)
+            ORDER BY firstname"""
+        result = db.session.execute(
+            sql, {"search1": f"%{parts[0]}%", "search2": f"%{parts[1]}%"})
     return result.fetchall()
-    
 
-def get_fighter(id):
-    sql = "SELECT f.*, c.id AS country_id, c.name AS country_name FROM fighters f JOIN countries c ON f.country = c.id WHERE f.id = :id"
-    result = db.session.execute(sql, {"id": id}).fetchone()
+
+def get_fighter(fighter_id):
+    sql = """SELECT f.*, c.id AS country_id, c.name AS country_name
+        FROM fighters f
+        JOIN countries c ON f.country = c.id
+        WHERE f.id = :fighter_id"""
+    result = db.session.execute(sql, {"fighter_id": fighter_id}).fetchone()
     return result
 
 
@@ -44,14 +64,20 @@ def add_fighter(form):
     weight = form.weight.data
     country = form.country.data
 
-    sql = "SELECT * FROM fighters WHERE firstname = :firstname AND lastname = :lastname AND born = :born"
+    sql = """SELECT *
+        FROM fighters
+        WHERE firstname = :firstname AND lastname = :lastname AND born = :born"""
     existing_fighter = db.session.execute(
         sql, {"firstname": firstname, "lastname": lastname, "born": born}
     ).fetchone()
     if existing_fighter:
         return False
 
-    sql = "INSERT INTO fighters (firstname, lastname, nickname, born, height, weight, country) VALUES (:firstname, :lastname, :nickname, :born, :height, :weight, :country)"
+    sql = """INSERT INTO fighters
+        (firstname, lastname, nickname,
+        born, height, weight, country)
+        VALUES (:firstname, :lastname, :nickname,
+        :born, :height, :weight, :country)"""
     db.session.execute(
         sql,
         {
@@ -78,7 +104,15 @@ def edit_fighter(form, fighter_id):
     weight = form.weight.data
     country = form.country.data
 
-    sql = "UPDATE fighters SET firstname = :firstname, lastname = :lastname, nickname = :nickname, born = :born, height = :height, weight = :weight, country = :country WHERE id = :id"
+    sql = """UPDATE fighters
+        SET firstname = :firstname,
+        lastname = :lastname,
+        nickname = :nickname,
+        born = :born,
+        height = :height,
+        weight = :weight,
+        country = :country
+        WHERE id = :id"""
     db.session.execute(
         sql,
         {
@@ -95,23 +129,25 @@ def edit_fighter(form, fighter_id):
     db.session.commit()
 
 
-def delete_fighter(id):
-    sql = "DELETE FROM fighters WHERE id = :id"
-    db.session.execute(sql, {"id": id})
+def delete_fighter(fighter_id):
+    sql = "DELETE FROM fighters WHERE id = :fighter_id"
+    db.session.execute(sql, {"fighter_id": fighter_id})
     db.session.commit()
 
 
 def get_fighter_id(firstname, lastname, born):
-    sql = "SELECT id FROM fighters WHERE firstname = :firstname AND lastname = :lastname AND born = :born"
+    sql = """SELECT id
+        FROM fighters
+        WHERE firstname = :firstname AND lastname = :lastname AND born = :born"""
     result = db.session.execute(
         sql, {"firstname": firstname, "lastname": lastname, "born": born}
     ).fetchone()
     return result[0]
 
 
-def get_referee(id):
-    sql = "SELECT * FROM referees WHERE id = :id"
-    result = db.session.execute(sql, {"id": id}).fetchone()
+def get_referee(ref_id):
+    sql = "SELECT * FROM referees WHERE id = :ref_id"
+    result = db.session.execute(sql, {"ref_id": ref_id}).fetchone()
     return result
 
 
@@ -143,14 +179,15 @@ def edit_referee(form, referee_id):
     db.session.commit()
 
 
-def delete_referee(id):
-    sql = "DELETE FROM referees WHERE id = :id"
-    db.session.execute(sql, {"id": id})
+def delete_referee(ref_id):
+    sql = "DELETE FROM referees WHERE id = :ref_id"
+    db.session.execute(sql, {"ref_id": ref_id})
     db.session.commit()
 
 
 def get_referee_list():
-    result = db.session.execute("SELECT * FROM referees WHERE id > 1 Order BY lastname")
+    result = db.session.execute(
+        "SELECT * FROM referees WHERE id > 1 Order BY lastname")
     return result.fetchall()
 
 

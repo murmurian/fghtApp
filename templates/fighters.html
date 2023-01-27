@@ -16,8 +16,9 @@
     </div>
     <div class="col-4"></div>
 </div>
-<div class="text-center">You can search by first name, last name, both or nickname</div>
-<table class="table table-striped my-3">
+<div class="text-center">Search by first name, last name, both or nickname</div>
+{% if not form.search.data %}<h3>Random fighters in database:</h3>{% endif %}
+<table class="table table-striped">
     <thead>
         <tr>
             <th scope="col">Fighter</th>
