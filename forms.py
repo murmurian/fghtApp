@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SelectField, DateField, validators, IntegerField, SubmitField
-from wtforms.validators import NumberRange, DataRequired, Optional
+from wtforms.validators import NumberRange, DataRequired, Optional, InputRequired
 import persons
 import matches
 
@@ -50,9 +50,9 @@ class FightForm(FlaskForm):
     ending_round = IntegerField("Ending Round", validators=[
                                 DataRequired(), NumberRange(min=1, max=5)])
     minutes = IntegerField("Minutes", validators=[
-                           DataRequired(), NumberRange(min=0, max=5)])
+                           InputRequired(), NumberRange(min=0, max=5)])
     seconds = IntegerField("Seconds", validators=[
-                           DataRequired(), NumberRange(min=0, max=59)])
+                           InputRequired(), NumberRange(min=0, max=59)])
     winner = SelectField("Winner", coerce=int)
     winning_method = StringField("Winning Method", validators=[DataRequired()])
     date = DateField("Date", validators=[DataRequired()], format="%Y-%m-%d")
