@@ -4,8 +4,11 @@
 {% endblock %}
 {% block content %}
 <h1 class="text-center my-3">{% if is_new %}Add {% else %}Edit{% endif %} score</h1>
-<a href="{{ url_for('fight_detail', fight_id=fight.id ) }}">{{ fight.f1_firstname }} {{ fight.f1_lastname }} vs {{
-  fight.f2_firstname }} {{ fight.f2_lastname }}</a>
+{% if not is_new %}
+<div class="text-center my-3">
+    <a href="{{ url_for('fight_detail', fight_id=fight.id ) }}" class="btn btn-primary">Return</a>
+</div>
+{% endif %}
 <form method="POST"
   action="{% if is_new %}{{ url_for('add_score', fight_id=fight.id, user_id=user_id ) }}{% else %}{{ url_for('edit_score', fight_id=fight.id, user_id=user_id ) }}{% endif %}">
   {{ form.hidden_tag() }}

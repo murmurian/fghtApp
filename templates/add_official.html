@@ -4,6 +4,11 @@
 {% endblock %}
 {% block content %}
 <h1 class="text-center my-3">{% if is_new %}Add a new{% else %}Edit{% endif %} referee</h1>
+{% if not is_new %}
+<div class="text-center my-3">
+    <a href="{{ url_for('referee_profile', referee_id=referee.id) }}" class="btn btn-primary">Return</a>
+</div>
+{% endif %}
 <form method="POST" action="{% if is_new %}{{ url_for('add_referee') }}{% else %}{{ url_for('edit_referee', referee_id=referee.id) }}{% endif %}">
   {{ form.hidden_tag() }}
   <div class="form-group row">
