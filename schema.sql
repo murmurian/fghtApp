@@ -30,11 +30,11 @@ CREATE TABLE countries (
 
 CREATE TABLE fights (
   id SERIAL PRIMARY KEY,
-  fighter1 INTEGER REFERENCES fighters(id) NOT NULL ON DELETE CASCADE,
-  fighter2 INTEGER REFERENCES fighters(id) NOT NULL ON DELETE CASCADE,
-  referee INTEGER REFERENCES referees(id) DEFAULT 1 NOT NULL ON DELETE CASCADE,
+  fighter1 INTEGER REFERENCES fighters(id) ON DELETE CASCADE NOT NULL,
+  fighter2 INTEGER REFERENCES fighters(id) ON DELETE CASCADE NOT NULL,
+  referee INTEGER REFERENCES referees(id) ON DELETE CASCADE NOT NULL DEFAULT 1,
   rounds SMALLINT DEFAULT 3 NOT NULL,
-  ending_time TIME,  
+  ending_time TIME,
   winner INTEGER REFERENCES fighters(id) ON DELETE CASCADE,
   draw BOOLEAN DEFAULT FALSE,
   winning_method TEXT,
@@ -65,6 +65,6 @@ CREATE TABLE scorecards (
   fight INTEGER REFERENCES fights(id) ON DELETE CASCADE,
   score_f1 SMALLINT,
   score_f2 SMALLINT,
-  comment TEXT
-  CONSTRAINT unique_scorecard UNIQUE (username, fight)
+  comment TEXT,
+  CONSTRAINT unique_scorecard UNIQUE (user_id, fight)
 );
