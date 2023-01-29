@@ -1,25 +1,41 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <h1 class="text-center my-3">Events</h1>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Date</th>
-        <th>Location</th>
-        <th>Promotion</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for event in events %}
-        <tr>
-          <td><a href="{{ url_for('events_route') }}/{{ event.id }}">{{ event.name }}</a></td>
-          <td>{{ event.date }}</td>
-          <td>{{ event.location }}</td>
-          <td>{{ event.promotion }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<h1 class="text-center my-3">Events</h1>
+<div class="row">
+  <div class="col-4"></div>
+  <div class="col-4">
+    <form method="POST" action="{{ url_for('events_route') }}" class="form-inline my-3 text-center">
+      {{ form.csrf_token }}
+      <div class="form-group mx-auto">
+        <label for="q" class="sr-only">Search</label>
+        {{ form.search(class='form-control', placeholder='Search') }}
+      </div>
+      <button class="btn btn-primary mx-auto" type="submit">Search</button>
+    </form>
+  </div>
+  <div class="col-4"></div>
+</div>
+<div class="text-center">Search by event name or promotion</div>
+{% if not form.search.data %}<h3>Latest events in database:</h3>{% endif %}
+<table class="table table-striped my-3">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Date</th>
+      <th>Location</th>
+      <th>Promotion</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for event in events %}
+    <tr>
+      <td><a href="{{ url_for('events_route') }}/{{ event.id }}">{{ event.name }}</a></td>
+      <td>{{ event.date }}</td>
+      <td>{{ event.location }}</td>
+      <td>{{ event.promotion }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 {% endblock %}

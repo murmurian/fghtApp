@@ -189,7 +189,7 @@ def add_fight():
         for referee in persons.get_referees()
     ]
     form.event.choices = [(-1, "N/A")] + [
-        (event.id, event.name) for event in matches.get_events()
+        (event.id, event.name) for event in matches.get_events("all")
     ]
     form.weight_class.choices = persons.get_weight_classes()
     if request.method == "POST" and form.validate_on_submit():
@@ -227,7 +227,7 @@ def edit_fight(fight_id):
         for referee in persons.get_referees()
     ]
     form.event.choices = [(-1, "N/A")] + [
-        (event.id, event.name) for event in matches.get_events()
+        (event.id, event.name) for event in matches.get_events("all")
     ]
     form.weight_class.choices = persons.get_weight_classes()
     final_round = matches.final_round(fight.ending_time.strftime("%M:%S"))
@@ -354,8 +354,16 @@ def delete_referee(referee_id):
 
 @app.route("/events/", methods=["GET", "POST"])
 def events_route():
-    events = matches.get_events()
-    return render_template("events.html", count=len(events), events=events)
+    form = SearchForm()
+    if request.method == "POST" and form.validate_on_submit():
+        events = matches.get_events(form)
+    else:
+        events = matches.get_events("latest")
+    return render_template(
+        "events.html",
+        count=len(events),
+        events=events,
+        form=form)
 
 
 @app.route("/events/<int:event_id>")

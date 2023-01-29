@@ -181,8 +181,15 @@ def get_fight(fight_id):
     return result
 
 
-def get_events():
-    result = db.session.execute("SELECT * FROM events")
+def get_events(query):
+    if query == "all":
+        result = db.session.execute("SELECT * FROM events ORDER BY name")
+    elif query == "latest":
+        result = db.session.execute("SELECT * FROM events ORDER BY date DESC LIMIT 10")
+    else:
+        search_data = query.search.data
+        sql = "SELECT * FROM events WHERE name ILIKE :search_data or promotion ILIKE :search_data ORDER BY date DESC"
+        result = db.session.execute(sql, {"search_data": "%" + search_data + "%"})
     return result.fetchall()
 
 
