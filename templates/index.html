@@ -1,6 +1,11 @@
 {% extends "layout.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-<h1 class="text-center my-3">Welcome!</h1>
-<p class="text-center">This is a website for MMA fans. You can find information about fighters, events and fights.</p>
+<p class="text-center my-3">MMA (Mixed Martial Arts) community has saying: "Don't leave it to the judges."
+    On these pages, you can find information on MMA fighters, fights and events. Registered users can also add their own scorecards and comment the fights in database.
+</p>
+<div class="text-center">
+    <img src="{{ url_for('static', filename='fghtApp.jpeg') }}" alt="Image">
+</div>
+<h1 class="text-center my-3">Get ready to rumble!</h1>
 {% endblock %}

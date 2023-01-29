@@ -205,7 +205,7 @@ def edit_fight(fight_id):
     )
 
 
-@app.route("/fights/delete/<int:fight_id>")
+@app.route("/fights/delete/<int:fight_id>", methods=["POST"])
 def delete_fight(fight_id):
     if not users.authorize():
         flash("You are not authorized to delete fights")
@@ -293,7 +293,7 @@ def edit_referee(referee_id):
     return render_template("add_official.html", form=form, referee=referee)
 
 
-@app.route("/referees/delete/<int:referee_id>")
+@app.route("/referees/delete/<int:referee_id>", methods=["POST"])
 def delete_referee(referee_id):
     if not users.authorize():
         flash("You are not authorized to delete referees")
@@ -375,7 +375,7 @@ def edit_event(event_id):
     return render_template("add_event.html", form=form, event=event)
 
 
-@app.route("/events/delete/<int:event_id>", methods=["GET", "POST"])
+@app.route("/events/delete/<int:event_id>", methods=["POST"])
 def delete_event(event_id):
     if not users.authorize():
         flash("You are not authorized to delete events")
@@ -383,9 +383,8 @@ def delete_event(event_id):
     if not matches.get_event(event_id):
         flash("Event not found")
         return redirect("/events")
-    if request.method == "POST":
-        matches.delete_event(event_id)
-        flash("Event deleted")
+    matches.delete_event(event_id)
+    flash("Event deleted")
     return redirect("/events")
 
 
@@ -475,10 +474,8 @@ def delete_score(fight_id, user_id):
     if not score:
         flash("You have not scored this fight")
         return redirect("/fights/" + str(fight_id))
-    score = users.get_score(fight_id, user_id)
-    if request.method == "POST":
-        matches.delete_score(score.id)
-        flash("Score deleted")
+    matches.delete_score(score.id)
+    flash("Score deleted")
     return redirect("/fights/" + str(fight_id))
 
 
