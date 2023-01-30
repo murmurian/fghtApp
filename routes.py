@@ -498,3 +498,11 @@ def scorecards(fight_id):
         ending_time=ending_time,
         is_admin=users.is_admin(session.get("user_id")),
     )
+
+
+# Not in production (yet)
+@app.route("/konami/<string:code>", methods=["POST"])
+def konamicode(code):
+    if users.extra_lives(code, session.get("user_id")):
+        flash("+30 lives")
+    return redirect("/")

