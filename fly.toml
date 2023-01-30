@@ -1,6 +1,6 @@
-# fly.toml file generated for withered-feather-7847 on 2023-01-29T19:26:33+02:00
+# fly.toml file generated for divine-violet-8048 on 2023-01-29T22:46:57+02:00
 
-app = "withered-feather-7847"
+app = "divine-violet-8048"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
